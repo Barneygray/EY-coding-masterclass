@@ -16,3 +16,5 @@
 14. `<marquee>` - scrolling text
 15. `<!-- comment -->`
 16. `<nav>` - Navigation bar
+
+`html:5 + TAB` generates skeleton of document
