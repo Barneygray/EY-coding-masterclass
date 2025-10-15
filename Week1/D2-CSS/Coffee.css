@@ -1,3 +1,11 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 30px;
+}
+
 .page-header {
     grid-area: nav-header;
     background-color: brown;
@@ -6,13 +14,13 @@
 
 .order-box {
     grid-area: left-box;
-    background-color: coffee;
+    background-color: red;
     padding: 10px;
 }
 
 .name-box {
     grid-area: ur-box;
-    background-color: coffee;
+    background-color: green;
     padding: 10px;
 }
 
@@ -29,7 +37,7 @@
 }
 
 .order-button {
-    grid-area: bottom;
+    grid-area: footer;
     background-color: grey;
     padding: 10px;
 }
@@ -37,9 +45,9 @@
 .my-page {
     display: grid;
     grid-template-areas:
-    "nav-header nav-header nav-header "
-    "ur-box . ul-box"
-    "ur-box . lr-box"
-    ". lower-box ."
-    "bottom bottom bottom"
+    "nav-header nav-header nav-header"
+    "left-box . ur-box"
+    "left-box . lr-box"
+    "lower-box lower-box lower-box"
+    "footer footer footer";
 }

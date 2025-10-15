@@ -6,63 +6,70 @@
     <link
   href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap"
   rel="stylesheet"/>
-    <title class = "page-header">Coffee Masters</title>
+    <link rel="stylesheet" href="Coffee.css">
+    <title>Coffee Masters</title>
 </head>
 <body>
-    <div class = "order-box">
-        <h2>ITEMS</h2>
-        <ul>
-            <li>
-                <span>Cappuccino</span>
-                <span>£3.50</span>
-            </li>
-            <ul>
-                <li>Lite foam</li>
+    <div class = "my-page">
+        <header  class = "page-header">
+            <img src = "https://btholt.github.io/complete-intro-to-web-dev-v3/images/coffee_masters_logo.png" alt = "Coffee Masters logo" height = "50" width = "50"/>
+            Coffee Masters
+        </header>
+        <div class = "order-box">
+            <h2>ITEMS</h2>
+           <ul>
+                <li>
+                  <span>Cappuccino</span>
+                  <span>£3.50</span>
+                </li>
+                <ul>
+                    <li>Lite foam</li>
+                </ul>
+                <li>
+                    <span>Cappuccino</span>
+                    <span>£3.75</span>
+                </li>
+                <ul>
+                    <li>Lite milk</li>
+                    <li>Double Espresso</li>
+                </ul>
+                <li>
+                    <span>Croissant</span>
+                    <span>£5.00</span>
+                </li>
+                <ul>
+                 <li>Butter</li>
+                </ul>
             </ul>
-            <li>
-                <span>Cappuccino</span>
-                <span>£3.75</span>
-            </li>
+        </div>
+        <div class = "name-box"> 
+            <h2>NAME</h2>
+            <input type="text">Name here<input/>
+        </div>
+        <div class = "card-box">
+            <h2>PAYMENT</h2>
+            <input type="text">Card Number<input/>
+            <input type="text">CCV Number<input/>
+        </div>
+        <div class = "total-box">
             <ul>
-                <li>Lite milk</li>
-                <li>Double Espresso</li>
+                <li>
+                    <span>Subtotal:</span>
+                    <span>£12.25</span>
+                </li>
+                <li>
+                    <span>Tax:</span>
+                    <span>£1.23</span>
+                </li>
+                <li>
+                    <span>Total:</span>
+                    <span>£13.48</span>
+                </li>
             </ul>
-            <li>
-                <span>Croissant</span>
-                <span>£5.00</span>
-            </li>
-            <ul>
-                <li>Butter</li>
-            </ul>
-        </ul>
-    </div>
-    <div class = "name-box"> 
-        <h2>NAME</h2>
-        <input type="text">Name here<input/>
-    </div>
-    <div class = "card-box">
-        <h2>PAYMENT</h2>
-        <input type="text">Card Number<input/>
-        <input type="text">CCV Number<input/>
-    </div>
-    <div class = "total-box">
-        <ul>
-            <li>
-                <span>Subtotal:</span>
-                <span>£12.25</span>
-            </li>
-            <li>
-                <span>Tax:</span>
-                <span>£1.23</span>
-            </li>
-            <li>
-                <span>Total:</span>
-                <span>£13.48</span>
-            </li>
-        </ul>
-    </div>
-    <div class = "button-box">
-        <button>Place Order</button>
+        </div>
+        <div class = "order-button">
+            <button>Place Order</button>
+        </div>
     </div>
 </body>
 </html>
