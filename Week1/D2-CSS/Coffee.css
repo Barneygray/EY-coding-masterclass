@@ -131,6 +131,10 @@ body {
     position: relative;
 }
 
+.total-box li:last-child{
+    font-weight: bold;
+}
+
 .input-group {
     position: relative;
     display: inline-block;
