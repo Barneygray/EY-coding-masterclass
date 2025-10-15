@@ -1,0 +1,45 @@
+.page-header {
+    grid-area: nav-header;
+    background-color: brown;
+    padding: 10px; 
+}
+
+.order-box {
+    grid-area: left-box;
+    background-color: coffee;
+    padding: 10px;
+}
+
+.name-box {
+    grid-area: ur-box;
+    background-color: coffee;
+    padding: 10px;
+}
+
+.card-box {
+    grid-area: lr-box;
+    background-color: coffee;
+    padding: 10px;
+}
+
+.total-box {
+    grid-area: lower-box;
+    background-color: white;
+    padding: 10px;
+}
+
+.order-button {
+    grid-area: bottom;
+    background-color: grey;
+    padding: 10px;
+}
+
+.my-page {
+    display: grid;
+    grid-template-areas:
+    "nav-header nav-header nav-header "
+    "ur-box . ul-box"
+    "ur-box . lr-box"
+    ". lower-box ."
+    "bottom bottom bottom"
+}
