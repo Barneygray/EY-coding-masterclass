@@ -42,9 +42,17 @@ body {
 
 .order-box {
     grid-area: left-box;
-    background-color: red;
     padding: 10px;
     background-color: #eee1d5;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+    margin: 10px;
+}
+
+.order-box:active {
+    grid-area: left-box;
+    padding: 10px;
+    background-color: #2bff00;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
     margin: 10px;
@@ -169,6 +177,35 @@ body {
 
 .nice-button {
     background-color: #deb993;
+    border: none;
+    width: 100%;
+    border-radius: 100px;
+    height: 40px;
+    font: 'Open Sans';
+}
+
+@keyframes spin{
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.title-spin {
+    animation: spin 2s infinite linear;
+    display: inline-block;
+}
+
+.nice-button:hover {
+    background-color: #ca945f;
+    border: none;
+    width: 100%;
+    border-radius: 100px;
+    height: 40px;
+    font: 'Open Sans';
+}
+
+.nice-button:active {
+    background-color: #87633f;
     border: none;
     width: 100%;
     border-radius: 100px;
