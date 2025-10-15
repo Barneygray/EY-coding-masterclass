@@ -11,64 +11,79 @@
 </head>
 <body>
     <div class = "my-page">
-        <header  class = "page-header">
-            <img src = "https://btholt.github.io/complete-intro-to-web-dev-v3/images/coffee_masters_logo.png" alt = "Coffee Masters logo" height = "50" width = "50"/>
-            Coffee Masters
-        </header>
+        <div  class = "page-header">
+            <img src = "https://btholt.github.io/complete-intro-to-web-dev-v3/images/coffee_masters_logo.png" alt = "Coffee Masters logo" class = "logo"/>
+            <h1>Coffee Masters</h1>
+        </div>
         <div class = "order-box">
-            <h2>ITEMS</h2>
-           <ul>
+            <h2 class="box-title">ITEMS</h2>
+           <ul class="order-list">
                 <li>
-                  <span>Cappuccino</span>
-                  <span>£3.50</span>
-                </li>
-                <ul>
+                    <div class="order-item">
+                    <span>Cappuccino</span>
+                    <span>£3.50</span>
+                    </div>
+                <ul class="sub-list">
                     <li>Lite foam</li>
                 </ul>
+                </li>
                 <li>
+                    <div class="order-item">
                     <span>Cappuccino</span>
                     <span>£3.75</span>
+                    </div>
+                    <ul class="sub-list">
+                        <li>Lite milk</li>
+                        <li>Double Espresso</li>
+                    </ul>
                 </li>
-                <ul>
-                    <li>Lite milk</li>
-                    <li>Double Espresso</li>
-                </ul>
                 <li>
+                    <div class="order-item">
                     <span>Croissant</span>
                     <span>£5.00</span>
+                    </div>
+                    <ul class="sub-list">
+                        <li>Butter</li>
+                    </ul>
                 </li>
-                <ul>
-                 <li>Butter</li>
-                </ul>
             </ul>
         </div>
         <div class = "name-box"> 
-            <h2>NAME</h2>
-            <input type="text">Name here<input/>
+            <h2 class="box-title">NAME</h2>
+            <div class="input-group">
+                <input type="text" class ="user-input" />
+                <h3 class="input-label">Name for Order</h3>
+            </div>
         </div>
         <div class = "card-box">
-            <h2>PAYMENT</h2>
-            <input type="text">Card Number<input/>
-            <input type="text">CCV Number<input/>
+            <h2 class="box-title">PAYMENT</h2>
+            <div class="input-group">
+                <input type ="text" class="user-input"/>
+                <h3 class = "input-label">Card Number</h3>
+            </div>
+            <div class="input-group">
+                <input type ="text" class="user-input"/>
+                <h3 class = "input-label">CCV Number</h3>
+            </div>
         </div>
         <div class = "total-box">
             <ul>
-                <li>
+                <li class="total-item">
                     <span>Subtotal:</span>
                     <span>£12.25</span>
                 </li>
-                <li>
+                <li class="total-item">
                     <span>Tax:</span>
                     <span>£1.23</span>
                 </li>
-                <li>
+                <li class="total-item">
                     <span>Total:</span>
                     <span>£13.48</span>
                 </li>
             </ul>
         </div>
         <div class = "order-button">
-            <button>Place Order</button>
+            <button class="nice-button">Place Order</button>
         </div>
     </div>
 </body>
