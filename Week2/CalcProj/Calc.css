@@ -1,0 +1,120 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 10px;
+  radius: 50px;
+  background-color: #efefef;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.input-screen {
+    grid-area: screen;
+    background-color: black;
+    color: white;
+}
+
+.C-button {
+    grid-area: C;
+}
+
+.arrow-button {
+    grid-area: arrow;
+}
+
+.div-button {
+    grid-area: div;
+}
+
+.seven-button {
+    grid-area: seven;
+}
+
+.eight-button {
+    grid-area: eight;
+}
+
+.nine-button {
+    grid-area: nine;
+}
+
+.x-button {
+    grid-area: x;
+}
+
+.four-button {
+    grid-area: four;
+}
+
+.five-button {
+    grid-area: five;
+}
+
+.six-button {
+    grid-area: six;
+}
+
+.minus-button {
+    grid-area: minus;
+}
+
+.one-button {
+    grid-area: one;
+}
+
+.two-button {
+    grid-area: two;
+}
+
+.three-button {
+    grid-area: three;
+}
+
+.plus-button {
+    grid-area: plus;
+}
+
+.zero-button {
+    grid-area: zero;
+}
+
+.equals-button {
+    grid-area: equals;
+}
+
+.calc-layout {
+    display: grid;
+    grid-template-areas:
+    "screen screen screen screen"
+    "screen screen screen screen"
+    "C C arrow div" 
+    "seven eight nine x"
+    "four five six minus"
+    "one two three plus"
+    "zero zero zero equals";
+}
+
+.grey-buttons {
+    background-color: grey;
+}
+
+.grey-buttons:hover {
+    background-color: lightgrey;
+}
+
+.grey-buttons:active {
+    background-color: rgb(53, 53, 53);
+}
+
+.orange-buttons {
+    background-color: orange;
+}
+
+.orange-buttons:hover {
+    background-color: rgb(255, 186, 57)
+}
+
+.orange-buttons:active {
+    background-color: rgb(201, 97, 0)
+}
