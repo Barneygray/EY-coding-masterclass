@@ -8,18 +8,20 @@ const divButton = document.querySelector(".div-button");
 const xButton = document.querySelector(".x-button");
 const equalsButton = document.querySelector(".equals-button");
 
-const display = document.querySelector(".input-screen");
+const calc = document.querySelector(".calc-screen")
+const display = document.querySelector(".result-screen");
 
+let calculation = [];
 let numStore = [];
 let numShow = [];
 let operations = [];
 
 number.forEach(button => {
     button.addEventListener("click", function() {
-        console.log(button.innerText);
         numShow.push(button.innerText);
+        calculation.push(button.innerText);
         display.innerText = numShow.join("");
-        console.log(numStore)
+        calc.innerText = calculation.join("");
     });
 });
 
@@ -28,12 +30,17 @@ clearButton.addEventListener("click", function() {
     numStore = [];
     operations = [];
     numShow = [];
+    calculation = [];
     display.innerText = "0";
+    calc.innerText = "null"
 });
 
 arrowButton.addEventListener("click", function() {
     numShow.pop();
+    calculation.pop();
     display.innerText = numShow.join("");
+    calc.innerText = calculation.join("");
+    calc.innerText = calculation.length > 0 ? calculation.join("") : "0";
     display.innerText = numShow.length > 0 ? numShow.join("") : "0";
 });
 
@@ -41,26 +48,32 @@ plusButton.addEventListener("click", function() {
     numStore.push(Number(numShow.join("")));
     numShow = [];
     operations.push("+")
-    console.log(numStore);
+    calculation.push("+")
+    calc.innerText = calculation.join("");
 });
 
 minusButton.addEventListener("click", function() {
     numStore.push(Number(numShow.join("")));
-    console.log(numStore[-1]);
     numShow = [];
-    operations.push("-")
+    operations.push("-");
+    calculation.push("-");
+    calc.innerText = calculation.join("");
 });
 
 divButton.addEventListener("click", function() {
     numStore.push(Number(numShow.join("")));
     numShow = [];
-    operations.push("/")
+    operations.push("/");
+    calculation.push("÷");
+    calc.innerText = calculation.join("");
 });
 
 xButton.addEventListener("click", function() {
     numStore.push(Number(numShow.join("")));
     numShow = [];
     operations.push("*");
+    calculation.push("x");
+    calc.innerText = calculation.join("");
 });
 
 equalsButton.addEventListener("click", function() {
@@ -87,5 +100,4 @@ equalsButton.addEventListener("click", function() {
     numStore = [];
     operations = [];
     display.innerText = result;
-    console.log(result);
 })
