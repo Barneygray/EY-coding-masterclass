@@ -10,9 +10,12 @@ body {
 }
 
 .input-screen {
-    grid-area: screen;
+    grid-area: screeni;
     background-color: black;
     color: white;
+    width: 100%;
+    height: 100%;
+    font-size: 32px;
 }
 
 .C-button {
@@ -40,7 +43,7 @@ body {
 }
 
 .x-button {
-    grid-area: x;
+    grid-area: xi;
 }
 
 .four-button {
@@ -76,7 +79,7 @@ body {
 }
 
 .zero-button {
-    grid-area: zero;
+    grid-area: zeroo;
 }
 
 .equals-button {
@@ -86,17 +89,23 @@ body {
 .calc-layout {
     display: grid;
     grid-template-areas:
-    "screen screen screen screen"
-    "screen screen screen screen"
+    "screeni screeni screeni screeni"
+    "screeni screeni screeni screeni"
     "C C arrow div" 
-    "seven eight nine x"
+    "seven eight nine xi"
     "four five six minus"
     "one two three plus"
-    "zero zero zero equals";
+    "zeroo zeroo zeroo equals";
+    width : 600px;
+    height: 600px;
 }
 
 .grey-buttons {
     background-color: grey;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-size: 32px;
 }
 
 .grey-buttons:hover {
@@ -109,6 +118,10 @@ body {
 
 .orange-buttons {
     background-color: orange;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-size: 32px;
 }
 
 .orange-buttons:hover {
