@@ -31,42 +31,47 @@ function calculateScore(hand) {
     return score;
 };
 
+async function dealerTurn() {
+    while (dealerScore < 17) {
+        await DelayNode(2000);
+        dealerHand.push(deck.pop());
+        console.log("Dealer has: " + dealerHand);
+        dealerScore = calculateScore(dealerHand);
+        console.log("Dealer's Score: " + dealerScore);
+    };
+}
+
 
 function play() {
     deck = shuffleDeck(deck);
 
     let userHand = [deck.pop(), deck.pop()];
     console.log("You have: " + userHand);
-    let userScore = CalculateScore(userHand);
+    let userScore = calculateScore(userHand);
     console.log("Your Score Is: " + userScore);
 
     let dealerHand = [deck.pop(), deck.pop()];
     console.log("Dealer shows: " + dealerHand[0]);
-    let dealerScore = CalculateScore(dealerHand);
+    let dealerScore = calculateScore(dealerHand);
 
     while (userScore < 21) {
-        globalThis.prompt("Hit or stand? (h/s): ");
-        if (Response.toLowerCase() === 'h') {
+        let response = globalThis.prompt("Hit or stand? (h/s): ");
+        if (response && response.toLowerCase() === 'h') {
             userHand.push(deck.pop());
             console.log("You have: " + userHand);
-            userScore = CalculateScore(userHand);
+            userScore = calculateScore(userHand);
             console.log("Your Score Is: " + userScore);
 
             if (userScore > 21) {
                 console.log("Bust! Dealer wins.");
                 return;
-            } 
+            }; 
         } else {
             break;
         };
     };
     
-    while (dealerScore < 17) {
-            dealerHand.Hand(deck.pop());
-            console.log("Dealer has: " + dealerHand);
-            dealerScore = CalculateScore(dealerHand);
-            console.log("Dealer's Score: " + dealerScore);
-    }
+    dealerTurn();
 
     if (dealerScore > 21 || userScore > dealerScore) {
         console.log("You win!");
@@ -74,6 +79,6 @@ function play() {
         console.log("Dealer wins!");
     }
     
-}
+};
 
 play();
