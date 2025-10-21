@@ -5,7 +5,7 @@ class Card {
         this.value = value;
     }
 
-    toString() {
+    cString() {
         return `${this.rank} of ${this.suit}`;
     }
 
@@ -71,16 +71,45 @@ class Hand {
         this.cards.push(card)
     }
 
-    getTotal() {
+    getPlayerTotal() {
         let t = 0;
+        let a = 0;
+
         for (let card of this.cards) {
-            t += card.getvalue
+            t += card.getvalue();
+            if (card.rank === 'A') {
+                a++;
+            }
         };
+
+        while (t > 21 && a > 0) {
+            t -= 10;
+            a--;
+        }
         return t;
     }
 
+    getDealerTotal() {
+        let t = 0;
+        let a = 0;
+
+        for (let card of this.cards) {
+            t += card.getvalue();
+            if (card.rank === 'A') {
+                a++;
+            }
+        };
+
+        while (t > 17 && a > 0) {
+            t -= 10;
+            a--;
+        }
+        return t;
+    }
+
+
     isBust() {
-        if (this.getTotal > 21) {
+        if (this.getPlayerTotal() > 21) {
             return true;
         } else {
             return false;
@@ -92,52 +121,61 @@ class Hand {
     }
 
     toString() {
+        let str = ""
         for (let card of this.cards) {
-            str += card.toString + " ";
+            str += card.cString() + ", ";
         }
+        return str
     }
 
 }
 
 function play() {
     const deck = new Deck()
-    deck.shuffle
+    deck.shuffle()
 
     let userHand = new Hand()
-    userHand.addCard()
-    userHand.addCard()
+    userHand.addCard(deck.drawCard())
+    userHand.addCard(deck.drawCard())
 
-    console.log("You have: " + userHand.toString)
-    console.log("Value: " + userHand.getTotal)
+    console.log("You have: " + userHand.toString())
+    console.log("Value: " + userHand.getPlayerTotal())
 
     let dealerHand = new Hand()
-    dealerHand.addCard
-    console.log("Dealer Shows: " + dealerHand.toString)
-    dealerHand.addCard
+    dealerHand.addCard(deck.drawCard())
+    console.log("Dealer Shows: " + dealerHand.toString())
+    dealerHand.addCard(deck.drawCard())
 
-    while (!userHand.isBust) {
+    while (!userHand.isBust()) {
         let response = globalThis.prompt("Hit or stand? (h/s): ");
-            if (response && response.toLowerCase() === 'h' && !userHand.isBust) {
-                userHand.addCard
-                console.log("You have: " + userHand.toString)
-                console.log("Value: " + userHand.getTotal)
-            } else {
-                break;
-            }
+        if (response && response.toLowerCase() === 'h' && !userHand.isBust()) {
+            userHand.addCard(deck.drawCard())
+            console.log("You have: " + userHand.toString())
+            console.log("Value: " + userHand.getPlayerTotal())
+        } else {
+            break;
         }
-
-    console.log("Dealer flips: " + dealerHand.toString);
-    console.log("Dealer's score: " + dealerHand.getTotal);
-
-    while (dealerHand.getTotal < 17) {
-        dealerHand.addCard;
-        console.log("Dealer has: " + dealerHand.toString);
-        console.log("Dealer's score: " + dealerHand.getTotal);
     }
 
-    if (dealerHand.getTotal > 21 || userHand.getTotal > dealerHand.getTotal) {
+    if (userHand.isBust) {
+        console.log("Bust! Dealer Wins");
+        return;
+    }
+
+    console.log("Dealer flips: " + dealerHand.toString());
+    console.log("Dealer's score: " + dealerHand.getDealerTotal());
+
+    while (dealerHand.getDealerTotal() < 17) {
+        dealerHand.addCard(deck.drawCard());
+        console.log("Dealer has: " + dealerHand.toString());
+        console.log("Dealer's score: " + dealerHand.getDealerTotal());
+    }
+
+    if (dealerHand.getDealerTotal() > 21 || userHand.getPlayerTotal() > dealerHand.getDealerTotal() && !userHand.isBust) {
         console.log("You win!");
     } else {
         console.log("Dealer wins!");
     }
 }
+
+play()
