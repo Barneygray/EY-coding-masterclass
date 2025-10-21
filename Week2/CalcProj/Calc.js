@@ -11,6 +11,32 @@ const equalsButton = document.querySelector(".equals-button");
 const calc = document.querySelector(".calc-screen")
 const display = document.querySelector(".result-screen");
 
+function autoResizeText() {
+  const container = document.getElementById('screen');
+  const text = document.getElementById('result-text');
+  let fontSize = 40; // starting font size
+
+  text.style.fontSize = fontSize + 'px';
+
+  while (text.scrollWidth > container.offsetWidth && fontSize > 10) {
+    fontSize--;
+    text.style.fontSize = fontSize + 'px';
+  }
+}
+
+function autoResizeText2() {
+  const container = document.getElementById('screen');
+  const text = document.getElementById('calc-text');
+  let fontSize = 25; // starting font size
+
+  text.style.fontSize = fontSize + 'px';
+
+  while (text.scrollWidth > container.offsetWidth && fontSize > 10) {
+    fontSize--;
+    text.style.fontSize = fontSize + 'px';
+  }
+}
+
 let calculation = [];
 let numStore = [];
 let numShow = [];
@@ -22,6 +48,8 @@ number.forEach(button => {
         calculation.push(button.innerText);
         display.innerText = numShow.join("");
         calc.innerText = calculation.join("");
+        autoResizeText();
+        autoResizeText2();
     });
 });
 
@@ -33,6 +61,8 @@ clearButton.addEventListener("click", function() {
     calculation = [];
     display.innerText = "0";
     calc.innerText = "null"
+    autoResizeText();
+    autoResizeText2();
 });
 
 arrowButton.addEventListener("click", function() {
@@ -42,6 +72,8 @@ arrowButton.addEventListener("click", function() {
     calc.innerText = calculation.join("");
     calc.innerText = calculation.length > 0 ? calculation.join("") : "0";
     display.innerText = numShow.length > 0 ? numShow.join("") : "0";
+    autoResizeText();
+    autoResizeText2();
 });
 
 plusButton.addEventListener("click", function() {
@@ -50,6 +82,7 @@ plusButton.addEventListener("click", function() {
     operations.push("+")
     calculation.push("+")
     calc.innerText = calculation.join("");
+    autoResizeText2();
 });
 
 minusButton.addEventListener("click", function() {
@@ -58,6 +91,7 @@ minusButton.addEventListener("click", function() {
     operations.push("-");
     calculation.push("-");
     calc.innerText = calculation.join("");
+    autoResizeText2();
 });
 
 divButton.addEventListener("click", function() {
@@ -66,6 +100,7 @@ divButton.addEventListener("click", function() {
     operations.push("/");
     calculation.push("÷");
     calc.innerText = calculation.join("");
+    autoResizeText2();
 });
 
 xButton.addEventListener("click", function() {
@@ -74,6 +109,7 @@ xButton.addEventListener("click", function() {
     operations.push("*");
     calculation.push("x");
     calc.innerText = calculation.join("");
+    autoResizeText2();
 });
 
 equalsButton.addEventListener("click", function() {
@@ -100,4 +136,7 @@ equalsButton.addEventListener("click", function() {
     numStore = [];
     operations = [];
     display.innerText = result;
+    autoResizeText();
 })
+
+

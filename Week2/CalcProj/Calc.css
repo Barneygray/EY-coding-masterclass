@@ -19,7 +19,9 @@ body {
     text-align: right;
     padding: 20px 5px;
     height: 200px;
+    width: 400px;
 }
+
 
 .calc-screen {
     color: rgba(255, 255, 255, 0.479);
