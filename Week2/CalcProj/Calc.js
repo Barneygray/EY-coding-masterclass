@@ -41,6 +41,7 @@ let calculation = [];
 let numStore = [];
 let numShow = [];
 let operations = [];
+let lastPressed = 0;
 
 number.forEach(button => {
     button.addEventListener("click", function() {
@@ -51,6 +52,7 @@ number.forEach(button => {
         autoResizeText();
         autoResizeText2();
     });
+    lastPressed = 0;
 });
 
 
@@ -63,6 +65,7 @@ clearButton.addEventListener("click", function() {
     calc.innerText = "null"
     autoResizeText();
     autoResizeText2();
+    lastPressed = 0;
 });
 
 arrowButton.addEventListener("click", function() {
@@ -74,42 +77,67 @@ arrowButton.addEventListener("click", function() {
     display.innerText = numShow.length > 0 ? numShow.join("") : "0";
     autoResizeText();
     autoResizeText2();
+    lastPressed = 0;
 });
 
 plusButton.addEventListener("click", function() {
-    numStore.push(Number(numShow.join("")));
-    numShow = [];
-    operations.push("+")
-    calculation.push("+")
+    if (lastPressed === "o") {
+        operations[-1] = "+";
+        calculation[1] = "+";
+    } else {
+        numStore.push(Number(numShow.join("")));
+        numShow = [];
+        operations.push("+");
+        calculation.push("+");
+    };
     calc.innerText = calculation.join("");
     autoResizeText2();
+    lastPressed = "o";
 });
 
 minusButton.addEventListener("click", function() {
-    numStore.push(Number(numShow.join("")));
-    numShow = [];
-    operations.push("-");
-    calculation.push("-");
+    if (lastPressed === "o") {
+        operations[-1] = "-";
+        calculation[1] = "-";
+    } else {
+        numStore.push(Number(numShow.join("")));
+        numShow = [];
+        operations.push("-");
+        calculation.push("-");
+    };
     calc.innerText = calculation.join("");
     autoResizeText2();
+    lastPressed = "o";
 });
 
 divButton.addEventListener("click", function() {
-    numStore.push(Number(numShow.join("")));
-    numShow = [];
-    operations.push("/");
-    calculation.push("÷");
+    if (lastPressed === "o") {
+        operations[-1] = "/";
+        calculation[1] = "÷";
+    } else {
+        numStore.push(Number(numShow.join("")));
+        numShow = [];
+        operations.push("/");
+        calculation.push("÷");
+    };
     calc.innerText = calculation.join("");
     autoResizeText2();
+    lastPressed = "o";
 });
 
 xButton.addEventListener("click", function() {
-    numStore.push(Number(numShow.join("")));
-    numShow = [];
-    operations.push("*");
-    calculation.push("x");
+    if (lastPressed === "o") {
+        operations[-1] = "*";
+        calculation[1] = "x";
+    } else {
+        numStore.push(Number(numShow.join("")));
+        numShow = [];
+        operations.push("*");
+        calculation.push("x");
+    };
     calc.innerText = calculation.join("");
     autoResizeText2();
+    lastPressed = "o";
 });
 
 equalsButton.addEventListener("click", function() {
