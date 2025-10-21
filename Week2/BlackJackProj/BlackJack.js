@@ -17,29 +17,33 @@ function shuffleDeck(deck) {
     return deck;
 }
 
-function calculateScore(hand) {
+function calculatePlayerScore(hand) {
     let score = 0;
     for (let i = 0; i < hand.length; i++) {
         if (hand[i][0] === 'A') {
             score += 11;
-        } else if (['K', 'Q', 'J'].includes(hand[i][0])) {
+        } else if (['T', 'K', 'Q', 'J'].includes(hand[i][0])) {
             score += 10;
         } else {
-            score += parseInt(hand[i][0]);
+            score += parseInt(hand[i].match(/\d+/g));
         }
     }
     return score;
 };
 
-async function dealerTurn() {
-    while (dealerScore < 17) {
-        await DelayNode(2000);
-        dealerHand.push(deck.pop());
-        console.log("Dealer has: " + dealerHand);
-        dealerScore = calculateScore(dealerHand);
-        console.log("Dealer's Score: " + dealerScore);
-    };
-}
+function calculateDealerScore(hand) {
+    let score = 0;
+    for (let i = 0; i < hand.length; i++) {
+        if (hand[i][0] === 'A') {
+            score += 11;
+        } else if (['T', 'K', 'Q', 'J'].includes(hand[i][0])) {
+            score += 10;
+        } else {
+            score += parseInt(hand[i].match(/\d+/g));
+        }
+    }
+    return score;
+};
 
 
 function play() {
@@ -47,19 +51,19 @@ function play() {
 
     let userHand = [deck.pop(), deck.pop()];
     console.log("You have: " + userHand);
-    let userScore = calculateScore(userHand);
+    let userScore = calculatePlayerScore(userHand);
     console.log("Your Score Is: " + userScore);
 
     let dealerHand = [deck.pop(), deck.pop()];
     console.log("Dealer shows: " + dealerHand[0]);
-    let dealerScore = calculateScore(dealerHand);
+    let dealerScore = calculateDealerScore(dealerHand);
 
     while (userScore < 21) {
         let response = globalThis.prompt("Hit or stand? (h/s): ");
         if (response && response.toLowerCase() === 'h') {
             userHand.push(deck.pop());
             console.log("You have: " + userHand);
-            userScore = calculateScore(userHand);
+            userScore = calculatePlayerScore(userHand);
             console.log("Your Score Is: " + userScore);
 
             if (userScore > 21) {
@@ -67,11 +71,18 @@ function play() {
                 return;
             }; 
         } else {
+            console.log("Dealer flips: " + dealerHand);
+            console.log("Dealer's Score: " + dealerScore)
             break;
         };
     };
     
-    dealerTurn();
+    while (dealerScore < 17) {
+        dealerHand.push(deck.pop());
+        console.log("Dealer has: " + dealerHand);
+        dealerScore = calculateDealerScore(dealerHand);
+        console.log("Dealer's Score: " + dealerScore);
+    };
 
     if (dealerScore > 21 || userScore > dealerScore) {
         console.log("You win!");
