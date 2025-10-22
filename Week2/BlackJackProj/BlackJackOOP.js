@@ -141,7 +141,7 @@ class Bank {
     }
 
     left() {
-        return("£" + String(this.moneyLeft));
+        console.log("Balance: £" + String(this.moneyLeft));
     }
 }
 
@@ -149,19 +149,39 @@ class Game {
     deck;
     userHand;
     dealerHand;
+    bet;
+    userHandSplit1;
+    userHandSplit2;
+    split;
     constructor() {
         this.playerScore = 0;
         this.dealerScore = 0;
+        this.balance = new Bank();
+        this.bet;
+        this.split = false;
     }
 
     gameSetup() {
         console.log("Player Score: " + String(this.playerScore) + " Dealer Score: " + String(this.dealerScore));
         this.deck = new Deck();
+        this.deck.shuffle();
     }
+
+    betting() {
+        this.balance.left();
+        let response = globalThis.prompt("Input bet: ");
+        if (!isNaN(Number(response)) && response > 0 && response <= this.balance.moneyLeft) {
+            this.bet = parseInt(response)
+        } else {
+            console.log("Bet must be a number between 0 and " + String(this.balance.moneyLeft))
+            this.betting();
+        }
+    }
+
     replay() {
         let playAgain = globalThis.prompt("Play Again? (y/n): ");
         if (playAgain && playAgain.toLowerCase() === 'y') {
-            return true;
+            this.play();
         } else {
             console.log("Player Score: " + String(this.playerScore) + " Dealer Score: " + String(this.dealerScore));
             return false;
@@ -171,6 +191,10 @@ class Game {
     playerWin() {
         console.log("You Win!");
         this.playerScore++;
+        this.balance.win(this.bet);
+        if (this.split) {
+            return;
+        }
         if (this.replay()) {
             this.play();
         } else {
@@ -181,6 +205,10 @@ class Game {
     playerLose() {
         console.log("Dealer Wins!");
         this.dealerScore++;
+        this.balance.lose(this.bet)
+        if (this.split) {
+            return;
+        }
         if (this.replay()) {
             this.play();
         } else {
@@ -195,6 +223,31 @@ class Game {
 
         console.log("You have: " + this.userHand.toString());
         console.log("Value: " + this.userHand.getPlayerTotal());
+    
+        this.dealerDeal()
+    }
+
+    splitPair() {
+        this.userHandSplit1 = new Hand();
+        this.userHandSplit2 = new Hand();
+
+        this.userHandSplit1.addCard(this.userHand.cards[0]);
+        this.userHandSplit2.addCard(this.userHand.cards[1]);
+
+        this.userHand = this.userHandSplit1
+        this.playerTurn()
+
+        this.split = false;
+
+        this.userHand = this.userHandSplit2
+        this.playerTurn()
+    }
+
+    doubleDown() {
+        let response = globalThis.prompt("Double Down? (y/n): ");
+        if (response && response.toLowerCase() === 'y' && this.bet*2 <= this.balance.moneyLeft) {
+            this.bet *= 2
+        }
     }
 
     dealerDeal() {
@@ -202,6 +255,25 @@ class Game {
         this.dealerHand.addCard(this.deck.drawCard())
         console.log("Dealer Shows: " + this.dealerHand.toString())
         this.dealerHand.addCard(this.deck.drawCard())
+
+        this.userChoice()
+    }
+
+    userChoice() {
+        this.split = false;
+        if (this.userHand.cards[0].rank === this.userHand.cards[1].rank) {
+            let response = globalThis.prompt("Split Pair? (y/n)")
+            if (response && response.toLowerCase === 'y') {
+                this.split = true;
+                this.splitPair();
+            }
+        }
+
+        if ([9, 10, 11].includes(this.userHand.getPlayerTotal())) {
+            this.doubleDown();
+        }
+
+        this.playerTurn()
     }
 
     playerTurn() {
@@ -218,6 +290,8 @@ class Game {
         if (this.userHand.isBust()) {
             console.log("Bust!");
             this.playerLose();
+        } else {
+            this.dealerTurn()
         }
     }
 
@@ -225,31 +299,35 @@ class Game {
         console.log("Dealer flips: " + this.dealerHand.toString());
         console.log("Dealer's score: " + this.dealerHand.getDealerTotal());
 
-        while (this.dealerHand.getDealerTotal() < 17) {
+        while (this.dealerHand.getDealerTotal() < 17 && this.dealerHand.getDealerTotal() < this.userHand.getPlayerTotal()) {
             this.dealerHand.addCard(this.deck.drawCard());
             console.log("Dealer has: " + this.dealerHand.toString());
             console.log("Dealer's score: " + this.dealerHand.getDealerTotal());
         }
+
+        this.whoWins()
+        
     }
 
     whoWins() {
         if (this.dealerHand.getDealerTotal() > 21 || this.userHand.getPlayerTotal() > this.dealerHand.getDealerTotal() && !this.userHand.isBust()) {
             this.playerWin();
-        } else {
+        } else if (!this.userHand.isBust()){
             this.playerLose();
         }
     }
 
     play() {
         this.gameSetup()
+        this.betting()
 
         this.playerDeal()
-        this.dealerDeal()
+        //this.dealerDeal()
 
-        this.playerTurn()
-        this.dealerTurn()
+        //this.playerTurn()
+        //this.dealerTurn()
 
-        this.whoWins()
+        //this.whoWins()
     }
 }
 
