@@ -1,16 +1,38 @@
+//TODO Create Game class
+
 class Card {
-    constructor(suit, rank, value) {
+    value;
+    constructor(suit, rank) {
         this.suit = suit;
         this.rank = rank;
-        this.value = value;
+        this.value = this.calculateValue();
     }
 
-    cString() {
+    toString() {
         return `${this.rank} of ${this.suit}`;
     }
 
     getvalue() {
         return this.value;
+    }
+
+    calculateValue() {
+        const values = {
+            'A' : 11,
+            '2' : 2,
+            '3' : 3,
+            '4' : 4,
+            '5' : 5,
+            '6' : 6,
+            '7' : 7,
+            '8' : 8,
+            '9' : 9,
+            '10' : 10,
+            'J' : 10,
+            'Q' : 10,
+            'K' : 10
+        }
+        return values[this.rank]
     }
 }
 
@@ -22,27 +44,13 @@ class Deck {
 
     initializeDeck() {
         const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-        const ranks = [
-            { rank: 'A', value: 11 },
-            { rank: '2', value: 2 },
-            { rank: '3', value: 3 },
-            { rank: '4', value: 4 },
-            { rank: '5', value: 5 },
-            { rank: '6', value: 6 },
-            { rank: '7', value: 7 },
-            { rank: '8', value: 8 },
-            { rank: '9', value: 9 },
-            { rank: '10', value: 10 },
-            { rank: 'J', value: 10 },
-            { rank: 'Q', value: 10 },
-            { rank: 'K', value: 10 }
-        ];
-
-        for (let suit of suits) {
-            for (let {rank, value} of ranks) {
-                this.cards.push(new Card(suit, rank, value));
-            }
-        }
+        const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        //TODO:reduce array methods
+        suits.forEach(suit => {
+            ranks.forEach(rank => {
+                this.cards.push(new Card(suit, rank))
+            })
+        })
     }
 
     shuffle() {
@@ -106,96 +114,144 @@ class Hand {
 
 
     isBust() {
-        if (this.getPlayerTotal() > 21) {
-            return true;
-        } else {
-            return false;
-        }
+        return(this.getPlayerTotal() > 21)
     }
 
     toString() {
         let str = ""
         for (let card of this.cards) {
-            str += card.cString() + ", ";
+            str += card.toString() + ", ";
         }
         return str
     }
 
 }
 
-function Replay() {
-    let playAgain = globalThis.prompt("Play Again? (y/n): ");
-    if (playAgain && playAgain.toLowerCase() === 'y') {
-        return true;
-    } else {
-        console.log("Player Score: " + String(playerScore) + " Dealer Score: " + String(dealerScore));
-        return false;
+class Bank {
+    constructor() {
+        this.moneyLeft = 1000;
+    }
+
+    win(bet) {
+        this.moneyLeft += bet;
+    }
+
+    lose(bet) {
+        this.moneyLeft -= bet;
+    }
+
+    left() {
+        return("£" + String(this.moneyLeft));
     }
 }
 
-let playerScore = 0;
-let dealerScore = 0;
+class Game {
+    deck;
+    userHand;
+    dealerHand;
+    constructor() {
+        this.playerScore = 0;
+        this.dealerScore = 0;
+    }
 
-function play() {
-    console.log("Player Score: " + String(playerScore) + " Dealer Score: " + String(dealerScore));
-    const deck = new Deck()
-    deck.shuffle()
-
-    let userHand = new Hand()
-    userHand.addCard(deck.drawCard())
-    userHand.addCard(deck.drawCard())
-
-    console.log("You have: " + userHand.toString())
-    console.log("Value: " + userHand.getPlayerTotal())
-
-    let dealerHand = new Hand()
-    dealerHand.addCard(deck.drawCard())
-    console.log("Dealer Shows: " + dealerHand.toString())
-    dealerHand.addCard(deck.drawCard())
-
-    while (!userHand.isBust()) {
-        let response = globalThis.prompt("Hit or stand? (h/s): ");
-        if (response && response.toLowerCase() === 'h' && !userHand.isBust()) {
-            userHand.addCard(deck.drawCard())
-            console.log("You have: " + userHand.toString())
-            console.log("Value: " + userHand.getPlayerTotal())
+    gameSetup() {
+        console.log("Player Score: " + String(this.playerScore) + " Dealer Score: " + String(this.dealerScore));
+        this.deck = new Deck();
+    }
+    replay() {
+        let playAgain = globalThis.prompt("Play Again? (y/n): ");
+        if (playAgain && playAgain.toLowerCase() === 'y') {
+            return true;
         } else {
-            break;
+            console.log("Player Score: " + String(this.playerScore) + " Dealer Score: " + String(this.dealerScore));
+            return false;
         }
     }
 
-    if (userHand.isBust()) {
-        console.log("Bust! Dealer Wins");
-        dealerScore++;
-        if (Replay()) {
-            play()
+    playerWin() {
+        console.log("You Win!");
+        this.playerScore++;
+        if (this.replay()) {
+            this.play();
         } else {
             return;
         }
     }
 
-    console.log("Dealer flips: " + dealerHand.toString());
-    console.log("Dealer's score: " + dealerHand.getDealerTotal());
-
-    while (dealerHand.getDealerTotal() < 17) {
-        dealerHand.addCard(deck.drawCard());
-        console.log("Dealer has: " + dealerHand.toString());
-        console.log("Dealer's score: " + dealerHand.getDealerTotal());
-    }
-
-    if (dealerHand.getDealerTotal() > 21 || userHand.getPlayerTotal() > dealerHand.getDealerTotal() && !userHand.isBust) {
-        console.log("You win!");
-        playerScore++;
-    } else {
-        dealerScore++;
-        console.log("Dealer wins!");
-    }
-
-    if (Replay()) {
-            play();
+    playerLose() {
+        console.log("Dealer Wins!");
+        this.dealerScore++;
+        if (this.replay()) {
+            this.play();
         } else {
             return;
         }
+    }
+
+    playerDeal() {
+        this.userHand = new Hand();
+        this.userHand.addCard(this.deck.drawCard());
+        this.userHand.addCard(this.deck.drawCard());
+
+        console.log("You have: " + this.userHand.toString());
+        console.log("Value: " + this.userHand.getPlayerTotal());
+    }
+
+    dealerDeal() {
+        this.dealerHand = new Hand()
+        this.dealerHand.addCard(this.deck.drawCard())
+        console.log("Dealer Shows: " + this.dealerHand.toString())
+        this.dealerHand.addCard(this.deck.drawCard())
+    }
+
+    playerTurn() {
+        while (!this.userHand.isBust()) {
+            let response = globalThis.prompt("Hit or stand? (h/s): ");
+            if (response && response.toLowerCase() === 'h' && !this.userHand.isBust()) {
+                this.userHand.addCard(this.deck.drawCard())
+                console.log("You have: " + this.userHand.toString())
+                console.log("Value: " + this.userHand.getPlayerTotal())
+            } else {
+                break;
+            }
+        }
+        if (this.userHand.isBust()) {
+            console.log("Bust!");
+            this.playerLose();
+        }
+    }
+
+    dealerTurn() {
+        console.log("Dealer flips: " + this.dealerHand.toString());
+        console.log("Dealer's score: " + this.dealerHand.getDealerTotal());
+
+        while (this.dealerHand.getDealerTotal() < 17) {
+            this.dealerHand.addCard(this.deck.drawCard());
+            console.log("Dealer has: " + this.dealerHand.toString());
+            console.log("Dealer's score: " + this.dealerHand.getDealerTotal());
+        }
+    }
+
+    whoWins() {
+        if (this.dealerHand.getDealerTotal() > 21 || this.userHand.getPlayerTotal() > this.dealerHand.getDealerTotal() && !this.userHand.isBust()) {
+            this.playerWin();
+        } else {
+            this.playerLose();
+        }
+    }
+
+    play() {
+        this.gameSetup()
+
+        this.playerDeal()
+        this.dealerDeal()
+
+        this.playerTurn()
+        this.dealerTurn()
+
+        this.whoWins()
+    }
 }
 
-play()
+const game = new Game()
+game.play()
