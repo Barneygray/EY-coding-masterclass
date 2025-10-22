@@ -56,11 +56,8 @@ class Deck {
         return this.cards.pop()
     }
 
-    resetDeck() {
-        this.cards = [];
-        this.initializeDeck();
-    }
 }
+
 
 class Hand {
     constructor() {
@@ -116,10 +113,6 @@ class Hand {
         }
     }
 
-    reset() {
-        this.cards = [];
-    }
-
     toString() {
         let str = ""
         for (let card of this.cards) {
@@ -130,7 +123,21 @@ class Hand {
 
 }
 
+function Replay() {
+    let playAgain = globalThis.prompt("Play Again? (y/n): ");
+    if (playAgain && playAgain.toLowerCase() === 'y') {
+        return true;
+    } else {
+        console.log("Player Score: " + String(playerScore) + " Dealer Score: " + String(dealerScore));
+        return false;
+    }
+}
+
+let playerScore = 0;
+let dealerScore = 0;
+
 function play() {
+    console.log("Player Score: " + String(playerScore) + " Dealer Score: " + String(dealerScore));
     const deck = new Deck()
     deck.shuffle()
 
@@ -157,9 +164,14 @@ function play() {
         }
     }
 
-    if (userHand.isBust) {
+    if (userHand.isBust()) {
         console.log("Bust! Dealer Wins");
-        return;
+        dealerScore++;
+        if (Replay()) {
+            play()
+        } else {
+            return;
+        }
     }
 
     console.log("Dealer flips: " + dealerHand.toString());
@@ -173,9 +185,17 @@ function play() {
 
     if (dealerHand.getDealerTotal() > 21 || userHand.getPlayerTotal() > dealerHand.getDealerTotal() && !userHand.isBust) {
         console.log("You win!");
+        playerScore++;
     } else {
+        dealerScore++;
         console.log("Dealer wins!");
     }
+
+    if (Replay()) {
+            play();
+        } else {
+            return;
+        }
 }
 
 play()
