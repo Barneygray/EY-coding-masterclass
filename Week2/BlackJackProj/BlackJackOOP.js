@@ -184,6 +184,7 @@ class Game {
             this.play();
         } else {
             console.log("Player Score: " + String(this.playerScore) + " Dealer Score: " + String(this.dealerScore));
+            console.log("Final " + this.balance.left())
             return false;
         }
     }
@@ -220,7 +221,7 @@ class Game {
         this.userHand = new Hand();
         this.userHand.addCard(this.deck.drawCard());
         this.userHand.addCard(this.deck.drawCard());
-
+        
         console.log("You have: " + this.userHand.toString());
         console.log("Value: " + this.userHand.getPlayerTotal());
     
@@ -234,11 +235,14 @@ class Game {
         this.userHandSplit1.addCard(this.userHand.cards[0]);
         this.userHandSplit2.addCard(this.userHand.cards[1]);
 
+        console.log("Playing Hand One: ")
         this.userHand = this.userHandSplit1
+        console.log(this.userHand)
         this.playerTurn()
 
         this.split = false;
 
+        console.log("Playing Hand 2: ")
         this.userHand = this.userHandSplit2
         this.playerTurn()
     }
@@ -262,8 +266,8 @@ class Game {
     userChoice() {
         this.split = false;
         if (this.userHand.cards[0].rank === this.userHand.cards[1].rank) {
-            let response = globalThis.prompt("Split Pair? (y/n)")
-            if (response && response.toLowerCase === 'y') {
+            let response = globalThis.prompt("Split Pair? (y/n):")
+            if (response && response.toLowerCase() === 'y') {
                 this.split = true;
                 this.splitPair();
             }
