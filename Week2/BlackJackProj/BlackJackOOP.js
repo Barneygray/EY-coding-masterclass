@@ -225,10 +225,12 @@ class Game {
         console.log("You have: " + this.userHand.toString());
         console.log("Value: " + this.userHand.getPlayerTotal());
     
-        this.dealerDeal()
+        // this.dealerDeal()
     }
 
     splitPair() {
+        this.userHand2 = new Hand(this.userHand.removeOne())
+
         this.userHandSplit1 = new Hand();
         this.userHandSplit2 = new Hand();
 
@@ -260,12 +262,12 @@ class Game {
         console.log("Dealer Shows: " + this.dealerHand.toString())
         this.dealerHand.addCard(this.deck.drawCard())
 
-        this.userChoice()
+        
     }
 
     userChoice() {
         this.split = false;
-        if (this.userHand.cards[0].rank === this.userHand.cards[1].rank) {
+        if (this.isSplittableHand) {
             let response = globalThis.prompt("Split Pair? (y/n):")
             if (response && response.toLowerCase() === 'y') {
                 this.split = true;
@@ -278,6 +280,10 @@ class Game {
         }
 
         this.playerTurn()
+    }
+
+    isSplittableHand() {
+        return this.userHand.cards[0].rank === this.userHand.cards[1].rank
     }
 
     playerTurn() {
@@ -326,7 +332,8 @@ class Game {
         this.betting()
 
         this.playerDeal()
-        //this.dealerDeal()
+        this.dealerDeal()
+        this.userChoice()
 
         //this.playerTurn()
         //this.dealerTurn()

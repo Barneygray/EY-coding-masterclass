@@ -51,8 +51,8 @@ number.forEach(button => {
         calc.innerText = calculation.join("");
         autoResizeText();
         autoResizeText2();
+        lastPressed = 0;
     });
-    lastPressed = 0;
 });
 
 
@@ -82,8 +82,8 @@ arrowButton.addEventListener("click", function() {
 
 plusButton.addEventListener("click", function() {
     if (lastPressed === "o") {
-        operations[-1] = "+";
-        calculation[1] = "+";
+        operations[operations.length-1] = "+";
+        calculation[calculation.length-1] = "+";
     } else {
         numStore.push(Number(numShow.join("")));
         numShow = [];
@@ -97,8 +97,8 @@ plusButton.addEventListener("click", function() {
 
 minusButton.addEventListener("click", function() {
     if (lastPressed === "o") {
-        operations[-1] = "-";
-        calculation[1] = "-";
+        operations[operations.length-1] = "-";
+        calculation[calculation.length-1] = "-";
     } else {
         numStore.push(Number(numShow.join("")));
         numShow = [];
@@ -112,8 +112,8 @@ minusButton.addEventListener("click", function() {
 
 divButton.addEventListener("click", function() {
     if (lastPressed === "o") {
-        operations[-1] = "/";
-        calculation[1] = "÷";
+        operations[operations.length -1] = "/";
+        calculation[calculation.length-1] = "÷";
     } else {
         numStore.push(Number(numShow.join("")));
         numShow = [];
@@ -127,8 +127,9 @@ divButton.addEventListener("click", function() {
 
 xButton.addEventListener("click", function() {
     if (lastPressed === "o") {
-        operations[-1] = "*";
-        calculation[1] = "x";
+        operations[operations.length -1] = "*";
+        calculation[calculation.length-1] = "x";
+        console.log(calculation)
     } else {
         numStore.push(Number(numShow.join("")));
         numShow = [];
