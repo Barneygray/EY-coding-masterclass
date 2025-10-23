@@ -314,7 +314,7 @@ class Game {
     userChoice(player) {
         console.log("You have: " + player.hand.toString());
         console.log("Value: " + player.hand.getPlayerTotal());
-        
+
         this.split = false;
         if (this.isSplittableHand(player)) {
             let response = globalThis.prompt("Split Pair? (y/n):")
@@ -347,9 +347,7 @@ class Game {
             }
         }
 
-        if (player.hand.getPlayerTotal() > this.highestScore && player.hand.getPlayerTotal() <= 21) {
-            this.highestScore = player.hand.getPlayerTotal()
-        }
+        this.calcBestHand()
         
         if (player.hand.isBust()) {
             console.log("Bust!");
@@ -362,8 +360,8 @@ class Game {
     }
 
     calcBestHand(player) {
-        if (player.hand.getPlayerTotal() > this.highestScore) {
-            this.highestScore = player.hand.getPlayerTotal();
+        if (player.hand.getPlayerTotal() > this.highestScore && player.hand.getPlayerTotal() <= 21) {
+            this.highestScore = player.hand.getPlayerTotal()
         }
 
     }
@@ -387,7 +385,7 @@ class Game {
     }
 
     whoWins(player) {
-        if (this.dealerHand.getDealerTotal() > 21 || player.hand.getPlayerTotal() > player.hand.getDealerTotal() && !player.hand.isBust()) {
+        if (this.dealerHand.getDealerTotal() > 21 || player.hand.getPlayerTotal() > this.dealerHand.getDealerTotal() && !player.hand.isBust()) {
             this.playerWin(player);
         } else if (!player.hand.isBust()){
             this.playerLose(player);
