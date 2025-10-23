@@ -158,14 +158,12 @@ class Player {
 class Game {
     deck;
     dealerHand;
-    bet;
     userHandSplit1;
     userHandSplit2;
     split;
     highestScore;
     whosTurn;
     constructor() {
-        this.balance = new Bank();
         this.split = false;
         this.numPlayers;
         this.players = [];
@@ -367,6 +365,17 @@ class Game {
         }
     }
 
+    checkActivePlayer() {
+         for (let i in this.players) {
+            totalBalance += this.players[i].moneyLeft
+        }
+        if (totalBalance > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     play() {
         this.gameSetup()
         for (let i in this.players) {
@@ -395,9 +404,11 @@ class Game {
             }
         }
 
-
-        
-        this.replay()
+        if (this.checkActivePlayer) {
+            this.replay();
+        } else {
+            console.log("All players out! Game over")
+        }
     }
 }
 
