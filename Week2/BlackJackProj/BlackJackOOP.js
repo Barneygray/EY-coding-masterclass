@@ -288,9 +288,9 @@ class Game {
     checkBlackJack(player) {
         if (player.hand.getPlayerTotal() === 21 && this.dealerHand.addCard(this.deck.drawCard()) !== 21 && player.hand.length === this.dealerHand.length === 2) {
             console.log("BlackJack!");
-            this.playerWin(player);
+            return true;
         } else if (player.hand.getPlayerTotal () === 21 && this.dealerHand.addCard(this.deck.drawCard()) === 21 && player.hand.length === this.dealerHand.length === 2) {
-            this.draw(player)
+            return false;
         }
     }
 
@@ -403,8 +403,8 @@ class Game {
                 this.whoWins(player);
             }
         }
-
-        if (this.checkActivePlayer) {
+        
+        if (this.checkActivePlayer()) {
             this.replay();
         } else {
             console.log("All players out! Game over")
