@@ -127,24 +127,6 @@ class Hand {
 
 }
 
-class Bank {
-    constructor() {
-        this.moneyLeft = 1000;
-    }
-
-    win(bet) {
-        this.moneyLeft += bet;
-    }
-
-    lose(bet) {
-        this.moneyLeft -= bet;
-    }
-
-    left() {
-        console.log("Balance: £" + String(this.moneyLeft));
-    }
-}
-
 class Player {
     constructor() {
         this.name;
