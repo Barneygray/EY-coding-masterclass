@@ -233,7 +233,7 @@ class Game {
 
     playerWin(player) {
         this.whosTurn++;
-        console.log("You Win!");
+        console.log(String(player.name) + " beat the dealer!");
         player.win(player.bet);
         if (this.split) {
             return;
@@ -242,7 +242,7 @@ class Game {
 
     playerLose(player) {
         this.whosTurn++;
-        console.log("Dealer Wins!");
+        console.log("The dealer beat " + String(player.name) + "!");
         player.lose(player.bet)
         if (this.split) {
             return;
@@ -312,6 +312,9 @@ class Game {
     }
 
     userChoice(player) {
+        console.log("You have: " + player.hand.toString());
+        console.log("Value: " + player.hand.getPlayerTotal());
+        
         this.split = false;
         if (this.isSplittableHand(player)) {
             let response = globalThis.prompt("Split Pair? (y/n):")
@@ -333,8 +336,6 @@ class Game {
     }
 
     playerTurn(player) {
-        console.log("You have: " + player.hand.toString());
-        console.log("Value: " + player.hand.getPlayerTotal());
         while (!player.hand.isBust()) {
             let response = globalThis.prompt("Hit or stand? (h/s): ");
             if (response && response.toLowerCase() === 'h' && !player.hand.isBust()) {
@@ -345,7 +346,11 @@ class Game {
                 break;
             }
         }
-        console.log(this.whosTurn, parseInt(this.numPlayers))
+
+        if (player.hand.getPlayerTotal() > this.highestScore && player.hand.getPlayerTotal() <= 21) {
+            this.highestScore = player.hand.getPlayerTotal()
+        }
+        
         if (player.hand.isBust()) {
             console.log("Bust!");
             this.playerLose(player);
