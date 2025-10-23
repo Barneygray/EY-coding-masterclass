@@ -261,13 +261,14 @@ class Game {
 
         console.log("Playing Hand One: ")
         player.hand = this.userHandSplit1
-        console.log(this.userHand)
+        console.log(player.hand)
         this.playerTurn(player)
 
         this.split = false;
 
         console.log("Playing Hand 2: ")
         player.hand = this.userHandSplit2
+        console.log(player.hand)
         this.playerTurn(player)
     }
 
@@ -281,15 +282,16 @@ class Game {
     dealerDeal() {
         this.dealerHand = new Hand()
         this.dealerHand.addCard(this.deck.drawCard())
+        console.log(" ")
         console.log("Dealer Shows: " + this.dealerHand.toString())
         this.dealerHand.addCard(this.deck.drawCard())
     }
 
     checkBlackJack(player) {
-        if (player.hand.getPlayerTotal() === 21 && this.dealerHand.addCard(this.deck.drawCard()) !== 21 && player.hand.length === this.dealerHand.length === 2) {
+        if (player.hand.getPlayerTotal() === 21 && this.dealerHand.addCard(this.deck.drawCard()) !== 21 && player.hand.cards.length === this.dealerHand.length === 2) {
             console.log("BlackJack!");
             return true;
-        } else if (player.hand.getPlayerTotal () === 21 && this.dealerHand.addCard(this.deck.drawCard()) === 21 && player.hand.length === this.dealerHand.length === 2) {
+        } else if (player.hand.getPlayerTotal () === 21 && this.dealerHand.addCard(this.deck.drawCard()) === 21 && player.hand.cards.length === this.dealerHand.length === 2) {
             return false;
         }
     }
@@ -299,7 +301,7 @@ class Game {
         console.log("Value: " + player.hand.getPlayerTotal());
 
         this.split = false;
-        if (this.isSplittableHand(player)) {
+        if (this.isSplittableHand(player) && player.moneyLeft >= player.bet*2) {
             let response = globalThis.prompt("Split Pair? (y/n):")
             if (response && response.toLowerCase() === 'y') {
                 this.split = true;
@@ -307,7 +309,7 @@ class Game {
             }
         }
 
-        if ([9, 10, 11].includes(player.hand.getPlayerTotal())) {
+        if ([9, 10, 11].includes(player.hand.getPlayerTotal()) && player.moneyLeft >= player.bet*2) {
             this.doubleDown(player);
         }
 
@@ -319,7 +321,7 @@ class Game {
     }
 
     playerTurn(player) {
-        while (!player.hand.isBust()) {
+        while (!player.hand.isBust() && !this.checkBlackJack(player)) {
             let response = globalThis.prompt("Hit or stand? (h/s): ");
             if (response && response.toLowerCase() === 'h' && !player.hand.isBust()) {
                 player.hand.addCard(this.deck.drawCard())
@@ -347,11 +349,13 @@ class Game {
     }
 
     dealerTurn() {
+        console.log(" ")
         console.log("Dealer flips: " + this.dealerHand.toString());
         console.log("Dealer's score: " + this.dealerHand.getDealerTotal());
 
         while (this.dealerHand.getDealerTotal() < 17 && this.dealerHand.getDealerTotal() < this.highestScore) {
             this.dealerHand.addCard(this.deck.drawCard());
+            console.log(" ")
             console.log("Dealer has: " + this.dealerHand.toString());
             console.log("Dealer's score: " + this.dealerHand.getDealerTotal());
         }
@@ -366,6 +370,7 @@ class Game {
     }
 
     checkActivePlayer() {
+        let totalBalance = 0;
          for (let i in this.players) {
             totalBalance += this.players[i].moneyLeft
         }
@@ -381,9 +386,10 @@ class Game {
         for (let i in this.players) {
             let player = this.players[i];
             if (player.stillActive) {
-                console.log(String(player.name) + "'s turn:")
-                this.betting(player)
-                this.playerDeal(player)
+                console.log(" ");
+                console.log(String(player.name) + "'s turn:");
+                this.betting(player);
+                this.playerDeal(player);
             }
         }
         this.dealerDeal()
@@ -391,6 +397,7 @@ class Game {
         for (let i in this.players) {
             let player = this.players[i];
             if (player.stillActive) {
+                console.log(" ")
                 console.log(String(player.name) + "'s turn:")
                 this.userChoice(player)
             }
