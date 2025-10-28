@@ -117,7 +117,7 @@ async function initGame() {
         }
 
 
-        if (key === 'Backspace' && indexCount > 0) {
+        if (key === 'Backspace' && indexCount > 1) {
             indexCount--;
             const letterBox = document.getElementById('l' + String(indexCount + currentRow*5))
             letterBox.textContent = '';

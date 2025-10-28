@@ -128,13 +128,12 @@ class Hand {
 }
 
 class Player {
+    name;
+    bet;
+    hand;
     constructor() {
-        this.name;
         this.moneyLeft = 1000;
-        this.bet;
-        this.stillActive = true;
-        this.hand;
-        this.bet;
+        this.isStillActive = true;
     }
 
     askName() {
@@ -160,11 +159,10 @@ class Game {
     dealerHand;
     userHandSplit1;
     userHandSplit2;
-    split;
     highestScore;
     whosTurn;
     constructor() {
-        this.split = false;
+        this.isSplit = false;
         this.numPlayers;
         this.players = [];
     }
@@ -211,16 +209,16 @@ class Game {
 
     endGame() {
         console.log("Final Balance: ")
-            for (let i = 0; i < this.numPlayers; i++) {
-                console.log(this.players[i].name + " £" + this.players[i].moneyLeft)
-            }
-            return false;
+        this.players.forEach(player => {
+            console.log(player.name + " £" + player.moneyLeft);
+        });
+        return false;
     }
 
     playerWin(player) {
         console.log(String(player.name) + " beat the dealer!");
         player.win(player.bet);
-        if (this.split) {
+        if (this.isSplit) {
             return;
         }
     }
@@ -228,12 +226,12 @@ class Game {
     playerLose(player) {
         console.log("The dealer beat " + String(player.name) + "!");
         player.lose(player.bet)
-        if (this.split) {
+        if (this.isSplit) {
             return;
         }
         if (player.moneyLeft === 0) {
             console.log("Out of Money - Game Over!")
-            player.stillActive = false;
+            player.isStillActive = false;
         } else {
             return;
         }
@@ -241,7 +239,7 @@ class Game {
 
     draw(player) {
         console.log("Player and Dealer BlackJack - Tie!")
-        if (this.split) {
+        if (this.isSplit) {
             return;
         }
     }
@@ -264,7 +262,7 @@ class Game {
         console.log(player.hand)
         this.playerTurn(player)
 
-        this.split = false;
+        this.isSplit = false;
 
         console.log("Playing Hand 2: ")
         player.hand = this.userHandSplit2
@@ -287,7 +285,7 @@ class Game {
         this.dealerHand.addCard(this.deck.drawCard())
     }
 
-    checkBlackJack(player) {
+    isBlackJack(player) {
         if (player.hand.getPlayerTotal() === 21 && this.dealerHand.addCard(this.deck.drawCard()) !== 21 && player.hand.cards.length === this.dealerHand.length === 2) {
             console.log("BlackJack!");
             return true;
@@ -300,11 +298,11 @@ class Game {
         console.log("You have: " + player.hand.toString());
         console.log("Value: " + player.hand.getPlayerTotal());
 
-        this.split = false;
+        this.isSplit = false;
         if (this.isSplittableHand(player) && player.moneyLeft >= player.bet*2) {
             let response = globalThis.prompt("Split Pair? (y/n):")
             if (response && response.toLowerCase() === 'y') {
-                this.split = true;
+                this.isSplit = true;
                 this.splitPair(player);
             }
         }
@@ -321,7 +319,7 @@ class Game {
     }
 
     playerTurn(player) {
-        while (!player.hand.isBust() && !this.checkBlackJack(player)) {
+        while (!player.hand.isBust() && !this.isBlackJack(player)) {
             let response = globalThis.prompt("Hit or stand? (h/s): ");
             if (response && response.toLowerCase() === 'h' && !player.hand.isBust()) {
                 player.hand.addCard(this.deck.drawCard())
@@ -385,7 +383,7 @@ class Game {
         this.gameSetup()
         for (let i in this.players) {
             let player = this.players[i];
-            if (player.stillActive) {
+            if (player.isStillActive) {
                 console.log(" ");
                 console.log(String(player.name) + "'s turn:");
                 this.betting(player);
@@ -406,7 +404,7 @@ class Game {
         this.dealerTurn()
         for (let i in this.players) {
             let player = this.players[i]
-            if (player.stillActive) {
+            if (player.isStillActive) {
                 this.whoWins(player);
             }
         }

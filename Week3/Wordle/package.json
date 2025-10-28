@@ -1,0 +1,11 @@
+{
+  "name": "wordle",
+  "version": "1.0.0",
+  "description": "make wordle app",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "vitest --ui",
+    "test": "your-test-comand"
+  }
+}
