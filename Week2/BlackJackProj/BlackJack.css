@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0px;
+  background-color: green;
+  color: white;
+  max-width: 900px;
+  max-height: 600px;
+  margin: 0 auto;
+}
+
+.dealers-hand {
+    grid-area: dealer;
+    background-color: red;
+    width: 300px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.balance-box {
+    grid-area: balance;
+    background-color: black;
+    width: 150px;
+    height: 150px;
+}
+.players-hands {
+    grid-area: players;
+    background-color: yellow;
+    width: 900px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.controls {
+    grid-area: controls;
+    background-color: blue;
+    width: 600px;
+    height: 150px;
+    display: grid;
+    grid-template-areas:
+    "hit hit hit hit proceed double-down"
+    "stand stand stand stand proceed split";
+}
+
+.table {
+    display: grid;
+    grid-template-areas:
+    ". . . . . ."
+    ". . dealer dealer . balance"
+    ". . . . . ."
+    "players players players players players players"
+    ". . . . . ."
+    ". controls controls controls controls ."
+    ". . . . . .";
+    width: 800px;
+    height: 600px;
+}
+
+
+.player {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.card {
+    display: flex;
+    height: 120px;
+    width: 80px;
+    background-color: white;
+    color: red;
+    border-radius: 15px;
+    margin: 2px;
+}
+
+.hit-button {
+    background-color: grey;
+    color: black;
+    grid-area: hit
+}
+
+.stand-button {
+    background-color: grey;
+    color: black;
+    grid-area: stand
+}
+
+.double-down-button {
+    background-color: grey;
+    color: black;
+    grid-area: double-down
+}
+
+.split-button {
+    background-color: grey;
+    color: black;
+    grid-area: split
+}
+
+.proceed-button {
+    background-color: grey;
+    color: black;
+    grid-area: proceed
+}
+
+

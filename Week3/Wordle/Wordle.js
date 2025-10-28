@@ -3,7 +3,7 @@ const guessRows = grid.querySelectorAll('.first-guess, .second-guess, .third-gue
 
 
 
-const wordOfDayUrl = "https://words.dev-apis.com/word-of-the-day"
+const wordOfDayUrl = "https://words.dev-apis.com/word-of-the-day?random=1"
 
 const checkWordUrl = "https://words.dev-apis.com/validate-word"
 

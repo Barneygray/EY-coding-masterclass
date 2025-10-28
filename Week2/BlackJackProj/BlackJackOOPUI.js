@@ -1,4 +1,9 @@
-//TODO Create Game class
+const dealerHandDiv = document.querySelector('.dealers-hand')
+const playersDiv = document.querySelector('.players-hands')
+const hitButton = document.querySelector('.hit-button')
+const standButton = document.querySelector('.stand-button')
+const doubleDownButton = document.querySelector('.double-down-button')
+const splitButton = document.querySelector('.split-button')
 
 class Card {
     value;
@@ -72,8 +77,22 @@ class Hand {
         this.cards = [];
     }
 
-    addCard(card) {
+    addCard(card, playerID) {
         this.cards.push(card)
+
+        const newCardDiv = document.createElement('div')
+        newCardDiv.classList.add('card')
+        newCardDiv.id = card.toString()
+
+        const cardText = document.createElement('p')
+        cardText.textContent = card.toString()
+        newCardDiv.appendChild(cardText)
+        if (playerID !== "dealers-hand") {
+            const playerHandDiv = document.getElementById(playerID)
+         playerHandDiv.appendChild(newCardDiv)
+        } else {
+            dealerHandDiv.appendChild(newCardDiv)
+        }
     }
 
     getPlayerTotal() {
@@ -174,6 +193,10 @@ class Game {
                 let p = new Player()
                 p.askName()
                 this.players.push(p)
+                const newPlayerDiv = document.createElement('div')
+                newPlayerDiv.classList.add('player')
+                newPlayerDiv.id = p.name
+                playersDiv.appendChild(newPlayerDiv)
             }
         } else {
             this.playerSetup()
@@ -246,16 +269,16 @@ class Game {
 
     playerDeal(player) {
         player.hand = new Hand();
-        player.hand.addCard(this.deck.drawCard());
-        player.hand.addCard(this.deck.drawCard());
+        player.hand.addCard(this.deck.drawCard(), player.name);
+        player.hand.addCard(this.deck.drawCard(), player.name);
     }
 
     splitPair(player) {
         this.userHandSplit1 = new Hand();
         this.userHandSplit2 = new Hand();
 
-        this.userHandSplit1.addCard(player.hand.cards[0]);
-        this.userHandSplit2.addCard(player.hand.cards[1]);
+        this.userHandSplit1.addCard(player.hand.cards[0], player.name);
+        this.userHandSplit2.addCard(player.hand.cards[1], player.name);
 
         console.log("Playing Hand One: ")
         player.hand = this.userHandSplit1
@@ -279,39 +302,47 @@ class Game {
 
     dealerDeal() {
         this.dealerHand = new Hand()
-        this.dealerHand.addCard(this.deck.drawCard())
+        this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand")
         console.log(" ")
         console.log("Dealer Shows: " + this.dealerHand.toString())
-        this.dealerHand.addCard(this.deck.drawCard())
+        this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand")
     }
 
     isBlackJack(player) {
-        if (player.hand.getPlayerTotal() === 21 && this.dealerHand.addCard(this.deck.drawCard()) !== 21 && player.hand.cards.length === this.dealerHand.length === 2) {
+        if (player.hand.getPlayerTotal() === 21 && this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand") !== 21 && player.hand.cards.length === this.dealerHand.length === 2) {
             console.log("BlackJack!");
             return true;
-        } else if (player.hand.getPlayerTotal () === 21 && this.dealerHand.addCard(this.deck.drawCard()) === 21 && player.hand.cards.length === this.dealerHand.length === 2) {
+        } else if (player.hand.getPlayerTotal () === 21 && this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand") === 21 && player.hand.cards.length === this.dealerHand.length === 2) {
             return false;
         }
     }
 
-    userChoice(player) {
+    async userChoice(player) {
         console.log("You have: " + player.hand.toString());
         console.log("Value: " + player.hand.getPlayerTotal());
-
         this.isSplit = false;
-        if (this.isSplittableHand(player) && player.moneyLeft >= player.bet*2) {
-            let response = globalThis.prompt("Split Pair? (y/n):")
-            if (response && response.toLowerCase() === 'y') {
-                this.isSplit = true;
-                this.splitPair(player);
-            }
-        }
+        const choice = await this.waitForUserChoice();
 
-        if ([9, 10, 11].includes(player.hand.getPlayerTotal()) && player.moneyLeft >= player.bet*2) {
-            this.doubleDown(player);
+        switch(choice) {
+            case 'split-button':
+                if (this.isSplittableHand(player) && player.moneyLeft >= player.bet*2) {
+                    let response = globalThis.prompt("Split Pair? (y/n):")
+                    if (response && response.toLowerCase() === 'y') {
+                        this.isSplit = true;
+                        this.splitPair(player);
+                    }
+                }
+                break;
+            case 'double-down-button':
+                if ([9, 10, 11].includes(player.hand.getPlayerTotal()) && player.moneyLeft >= player.bet*2) {
+                    this.doubleDown(player);
+                }
+                break;
+            case 'proceed-button':
+                this.playerTurn(player)
+                break;
         }
-
-        this.playerTurn(player)
+    
     }
 
     isSplittableHand(player) {
@@ -379,6 +410,23 @@ class Game {
         }
     }
 
+    waitForUserChoice() {
+        return new Promise ((resolve) => {
+            function handleClick(event) {
+                const id = event.target.id;
+                if(['proceed-button', 'double-down-button', 'split-button'].includes(id)) {
+                    document.getElementById('proceed-button').removeEventListener('click', handleClick);
+                    document.getElementById('double-down-button').removeEventListener('click', handleClick);
+                    document.getElementById('split-button').removeEventListener('click', handleClick);
+                    resolve(id);
+                }
+            }
+            document.getElementById('proceed-button').addEventListener('click', handleClick);
+            document.getElementById('double-down-button').addEventListener('click', handleClick);
+            document.getElementById('split-button').addEventListener('click', handleClick);
+        })
+    }
+
     play() {
         this.gameSetup()
         for (let i in this.players) {
@@ -394,7 +442,7 @@ class Game {
 
         for (let i in this.players) {
             let player = this.players[i];
-            if (player.stillActive) {
+            if (player.isStillActive) {
                 console.log(" ")
                 console.log(String(player.name) + "'s turn:")
                 this.userChoice(player)
