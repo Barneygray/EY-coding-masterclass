@@ -68,8 +68,10 @@ function changeColours(rowIndex, colourArray) {
     for (let i = 1; i < 6; i++) {
         const letterBox = document.getElementById('l' + String(i + rowIndex*5));
         letterBox.style.color = "white";
-        letterBox.style.backgroundColor = colourArray[i-1]
-    }
+        setTimeout(() => {
+            letterBox.style.color = "white";
+            letterBox.style.backgroundColor = colourArray[i-1];
+    }, i*500);}
 }
 
 function moveUpDown(item) {
@@ -130,7 +132,9 @@ async function initGame() {
                 const rowColours = checkWord(userWord);
                 changeColours(currentRow, rowColours)
                 if (userWord.join('') === word) {
-                    correctGuess(currentRow);
+                    setTimeout(() => {
+                        correctGuess(currentRow);
+                    }, 2500);
                     return;
                 }
                 userWord = []
