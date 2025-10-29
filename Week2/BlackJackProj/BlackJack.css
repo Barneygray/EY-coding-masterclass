@@ -13,7 +13,6 @@ body {
 
 .dealers-hand {
     grid-area: dealer;
-    background-color: red;
     width: 300px;
     height: 150px;
     display: flex;
@@ -23,32 +22,34 @@ body {
 
 .balance-box {
     grid-area: balance;
-    background-color: black;
+    background-color: rgb(251, 221, 190);
+    color: black;
     width: 150px;
     height: 150px;
 }
 
 .action-prompt-box {
     grid-area: prompt;
-    background-color: black;
-    color: white;
+    color: black;
     width: 300px;
-    height: 150px;
-}
-
-.players-hands {
-    grid-area: players;
-    background-color: yellow;
-    width: 900px;
     height: 150px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.players-hands {
+    grid-area: players;
+    width: 900px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
 .controls {
     grid-area: controls;
-    background-color: blue;
     width: 600px;
     height: 150px;
     display: grid;
@@ -64,8 +65,6 @@ body {
     ". . dealer dealer . balance"
     ". . prompt prompt . ."
     "players players players players players players"
-    ". . . . . ."
-    ". controls controls controls controls ."
     ". . . . . .";
     width: 800px;
     height: 600px;
@@ -89,34 +88,23 @@ body {
     margin: 2px;
 }
 
-.hit-button {
-    background-color: grey;
-    color: black;
-    grid-area: hit
+.hand { 
+    max-width: 900px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.stand-button {
-    background-color: grey;
-    color: black;
-    grid-area: stand
+.input-box {
+
 }
 
-.double-down-button {
-    background-color: grey;
-    color: black;
-    grid-area: double-down
+.first-button {
+
 }
 
-.split-button {
-    background-color: grey;
-    color: black;
-    grid-area: split
-}
+.second-button {
 
-.proceed-button {
-    background-color: grey;
-    color: black;
-    grid-area: proceed
 }
 
 

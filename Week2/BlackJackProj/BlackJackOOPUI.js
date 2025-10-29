@@ -79,7 +79,7 @@ class Hand {
         this.cards = [];
     }
 
-    addCard(card, playerID) {
+    addCard(card, playerID, hand) {
         this.cards.push(card)
 
         const newCardDiv = document.createElement('div')
@@ -89,9 +89,10 @@ class Hand {
         const cardText = document.createElement('p')
         cardText.textContent = card.toString()
         newCardDiv.appendChild(cardText)
+
         if (playerID !== "dealers-hand") {
-            const playerHandDiv = document.getElementById(playerID)
-         playerHandDiv.appendChild(newCardDiv)
+            const playerHandDiv = document.getElementById(playerID + "-hand-" + String(hand))
+            playerHandDiv.appendChild(newCardDiv)
         } else {
             dealerHandDiv.appendChild(newCardDiv)
         }
@@ -199,6 +200,7 @@ class Game {
         promptText.textContent = prompt
 
         const inputBox = document.createElement('input')
+        inputBox.className = "input-box"
         inputBox.type = "text"
 
         actionPromptBox.innerHTML = ""
@@ -220,9 +222,11 @@ class Game {
         promptText.textContent = prompt
 
         const button1 = document.createElement('button')
+        button1.className = "first-button"
         button1.textContent = input1
 
         const button2 = document.createElement('button')
+        button2.className = "second-button"
         button2.textContent = input2
 
         actionPromptBox.innerHTML = ""
@@ -265,7 +269,7 @@ class Game {
                 playersDiv.appendChild(newPlayerDiv)
 
                 const playerBalance = document.createElement('p')
-                playerBalance.textContent = p.name + ': ' + p.moneyLeft
+                playerBalance.textContent = p.name + ': £' + p.moneyLeft
                 playerBalance.id = String(p.name + 'balance')
                 balanceBox.appendChild(playerBalance)
 
@@ -290,7 +294,7 @@ class Game {
         if (!isNaN(Number(response)) && response > 0 && response <= player.moneyLeft) {
             player.bet = parseInt(response)
         } else {
-            console.log("Bet must be a number between 0 and " + String(player.moneyLeft))
+            this.promptText("Bet must be a number between 0 and " + String(player.moneyLeft))
             await this.betting(player);
         }
     }
@@ -299,7 +303,7 @@ class Game {
         let playAgain = await this.createPromptButtonResponse("Play Again?", "Yes", "No")
         
         if (playAgain === "Yes") {
-            this.play();
+            await this.play();
         } else {
             this.endGame()
         }
@@ -354,28 +358,37 @@ class Game {
 
     playerDeal(player) {
         player.hand = new Hand();
-        player.hand.addCard(this.deck.drawCard(), player.name);
-        player.hand.addCard(this.deck.drawCard(), player.name);
+
+        const handDiv = document.createElement('div')
+        handDiv.id = String(player.name) + "-hand-1"
+        handDiv.className = "hand"
+        document.getElementById(player.name).appendChild(handDiv)
+
+        player.hand.addCard(this.deck.drawCard(), player.name, 1);
+        player.hand.addCard(this.deck.drawCard(), player.name, 1);
     }
 
-    splitPair(player) {
+    async splitPair(player) {
         this.userHandSplit1 = new Hand();
         this.userHandSplit2 = new Hand();
 
-        this.userHandSplit1.addCard(player.hand.cards[0], player.name);
-        this.userHandSplit2.addCard(player.hand.cards[1], player.name);
+        const handDiv = document.createElement('div')
+        handDiv.id = String(player.name) + "-hand-2"
+        handDiv.className = "hand"
+        playersDiv.addChild(handDiv)
 
-        console.log("Playing Hand One: ")
+        this.userHandSplit1.addCard(player.hand.cards[0], player.name, 1);
+        this.userHandSplit2.addCard(player.hand.cards[1], player.name, 2);
+
+        this.promptText("Playing Hand 1:")
         player.hand = this.userHandSplit1
-        console.log(player.hand)
-        this.playerTurn(player)
+        await this.playerTurn(player)
 
         this.isSplit = false;
 
-        console.log("Playing Hand 2: ")
+        this.promptText("Playing Hand 2: ")
         player.hand = this.userHandSplit2
-        console.log(player.hand)
-        this.playerTurn(player)
+        await this.playerTurn(player, 2)
     }
 
     async doubleDown(player) {
@@ -404,28 +417,27 @@ class Game {
             const choice = await this.createPromptButtonResponse(String(player.name) + ", Split?", "Yes", "No")
             if (choice === "Yes") {
                 this.isSplit = true;
-                this.splitPair(player)
+                await this.splitPair(player)
             }
         } else if ([9, 10, 11].includes(player.hand.getPlayerTotal()) && player.moneyLeft >= player.bet*2) {
             await this.doubleDown(player)
-        } else {
-            await this.playerTurn(player)
-        }
-    
+        } 
+        
+        await this.playerTurn(player)
     }
 
     isSplittableHand(player) {
         return player.hand.cards[0].rank === player.hand.cards[1].rank
     }
 
-    async playerTurn(player) {
+    async playerTurn(player, hand=1) {
         let isStanding = false;
 
         while (!player.hand.isBust() && !this.isBlackJack(player) && !isStanding) {
         const choice = await this.createPromptButtonResponse(String(player.name) +", Hit or Stand?", "Hit", "Stand");
 
             if (choice === "Hit") {
-                player.hand.addCard(this.deck.drawCard(), player.name)
+                player.hand.addCard(this.deck.drawCard(), player.name, hand)
                 console.log("You have: " + player.hand.toString())
                 console.log("Value: " + player.hand.getPlayerTotal())
             } else if (choice === "Stand") {
@@ -481,47 +493,13 @@ class Game {
         }
     }
 
-    waitForUserChoice() {
-        return new Promise ((resolve) => {
-            function handleClick(event) {
-                const id = event.target.id;
-                if(['proceed-button', 'double-down-button', 'split-button'].includes(id)) {
-                    document.getElementById('proceed-button').removeEventListener('click', handleClick);
-                    document.getElementById('double-down-button').removeEventListener('click', handleClick);
-                    document.getElementById('split-button').removeEventListener('click', handleClick);
-                    resolve(id);
-                }
-            }
-            document.getElementById('proceed-button').addEventListener('click', handleClick);
-            document.getElementById('double-down-button').addEventListener('click', handleClick);
-            document.getElementById('split-button').addEventListener('click', handleClick);
-        })
-    }
-
-    waitForHitOrStand() {
-        return new Promise ((resolve) => {
-            function handleClick(event) {
-                const id = event.target.id;
-                if(['hit-button', 'stand-button'].includes(id)) {
-                    document.getElementById('hit-button').removeEventListener('click', handleClick);
-                    document.getElementById('stand-button').removeEventListener('click', handleClick);
-                    resolve(id);
-                }
-            }
-            document.getElementById('hit-button').addEventListener('click', handleClick);
-            document.getElementById('stand-button').addEventListener('click', handleClick);
-        })
-    }
 
     async play() {
-        console.log("started")
         this.gameSetup()
         for (let i in this.players) {
             let player = this.players[i];
             document.getElementById(player.name).innerHTML = ""
             if (player.isStillActive) {
-                console.log(" ");
-                console.log(String(player.name) + "'s turn:");
                 await this.betting(player);
                 this.playerDeal(player);
             }
