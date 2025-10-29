@@ -27,6 +27,15 @@ body {
     width: 150px;
     height: 150px;
 }
+
+.action-prompt-box {
+    grid-area: prompt;
+    background-color: black;
+    color: white;
+    width: 300px;
+    height: 150px;
+}
+
 .players-hands {
     grid-area: players;
     background-color: yellow;
@@ -53,7 +62,7 @@ body {
     grid-template-areas:
     ". . . . . ."
     ". . dealer dealer . balance"
-    ". . . . . ."
+    ". . prompt prompt . ."
     "players players players players players players"
     ". . . . . ."
     ". controls controls controls controls ."
