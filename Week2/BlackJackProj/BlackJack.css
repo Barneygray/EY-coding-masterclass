@@ -75,10 +75,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
+    gap: 15px;
 }
 
-.card {
+.red-card {
     display: flex;
     height: 120px;
     width: 80px;
@@ -87,6 +87,17 @@ body {
     border-radius: 15px;
     margin: 2px;
 }
+
+.black-card {
+    display: flex;
+    height: 120px;
+    width: 80px;
+    background-color: white;
+    color: black;
+    border-radius: 15px;
+    margin: 2px;
+}
+
 
 .hand { 
     max-width: 900px;

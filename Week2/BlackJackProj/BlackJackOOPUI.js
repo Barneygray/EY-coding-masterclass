@@ -83,7 +83,12 @@ class Hand {
         this.cards.push(card)
 
         const newCardDiv = document.createElement('div')
-        newCardDiv.classList.add('card')
+        if (['Clubs', 'Spades'].includes(card.suit)) {
+            newCardDiv.classList.add('black-card')
+        } else {
+            newCardDiv.classList.add('red-card')
+        }
+
         newCardDiv.id = card.toString()
 
         const cardText = document.createElement('p')
@@ -310,11 +315,11 @@ class Game {
     }
 
     endGame() {
-        console.log("Final Balance: ")
+        let string = "Final Balance: "
         this.players.forEach(player => {
-            console.log(player.name + " £" + player.moneyLeft);
+            string += player.name + ": £" + player.moneyLeft + " ";
         });
-        return false;
+        this.displayText(string)
     }
 
     updateScoreBoard(player) {
@@ -375,18 +380,24 @@ class Game {
         const handDiv = document.createElement('div')
         handDiv.id = String(player.name) + "-hand-2"
         handDiv.className = "hand"
-        playersDiv.addChild(handDiv)
+        document.getElementById(String(player.name)).appendChild(handDiv)
 
         this.userHandSplit1.addCard(player.hand.cards[0], player.name, 1);
         this.userHandSplit2.addCard(player.hand.cards[1], player.name, 2);
 
-        this.promptText("Playing Hand 1:")
+        const lastChild = document.getElementById(String(player.name) + "-hand-1").lastElementChild
+        document.getElementById(String(player.name) + "-hand-1").removeChild(lastChild)
+
+        const lastChild2 = document.getElementById(String(player.name) + "-hand-1").lastElementChild
+        document.getElementById(String(player.name) + "-hand-1").removeChild(lastChild2)
+
+        this.displayText("Playing Hand 1:")
         player.hand = this.userHandSplit1
         await this.playerTurn(player)
 
         this.isSplit = false;
 
-        this.promptText("Playing Hand 2: ")
+        this.displayText("Playing Hand 2: ")
         player.hand = this.userHandSplit2
         await this.playerTurn(player, 2)
     }
@@ -394,7 +405,7 @@ class Game {
     async doubleDown(player) {
         const choice = await this.createPromptButtonResponse(String(player.name) + ", Double Down?", "Yes", "No")
         if (choice === "Yes") {
-            player.bet*2
+            player.bet*=2
         }
     }
 
@@ -404,12 +415,7 @@ class Game {
     }
 
     isBlackJack(player) {
-        if (player.hand.getPlayerTotal() === 21 && this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand") !== 21 && player.hand.cards.length === this.dealerHand.length === 2) {
-            console.log("BlackJack!");
-            return true;
-        } else if (player.hand.getPlayerTotal () === 21 && this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand") === 21 && player.hand.cards.length === this.dealerHand.length === 2) {
-            return false;
-        }
+        return (player.hand.getPlayerTotal() === 21)
     }
 
     async userChoice(player) {
@@ -431,9 +437,7 @@ class Game {
     }
 
     async playerTurn(player, hand=1) {
-        let isStanding = false;
-
-        while (!player.hand.isBust() && !this.isBlackJack(player) && !isStanding) {
+        while (!player.hand.isBust() && !this.isBlackJack(player)) {
         const choice = await this.createPromptButtonResponse(String(player.name) +", Hit or Stand?", "Hit", "Stand");
 
             if (choice === "Hit") {
@@ -441,9 +445,12 @@ class Game {
                 console.log("You have: " + player.hand.toString())
                 console.log("Value: " + player.hand.getPlayerTotal())
             } else if (choice === "Stand") {
-                isStanding = true
                 break;
             }
+        }
+
+        if (this.isBlackJack(player)) {
+            this.displayText('BlackJack!')
         }
 
         this.calcBestHand(player)
@@ -496,9 +503,13 @@ class Game {
 
     async play() {
         this.gameSetup()
-        for (let i in this.players) {
+
+        for (let i in this.players){
             let player = this.players[i];
             document.getElementById(player.name).innerHTML = ""
+        }
+        for (let i in this.players) {
+            let player = this.players[i];
             if (player.isStillActive) {
                 await this.betting(player);
                 this.playerDeal(player);
@@ -527,7 +538,7 @@ class Game {
         if (this.checkActivePlayer()) {
             await this.replay();
         } else {
-            this.promptText("All players out of money! Game over")
+            this.displayText("All players out of money! Game over")
         }
     }
 }
