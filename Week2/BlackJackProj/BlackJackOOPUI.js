@@ -356,12 +356,12 @@ class Game {
     async betting(player) {
         player.left();
         const response = await this.createPromptNumResponse(player.name + ", input bet:")
-    
         if (!isNaN(Number(response)) && response > 0 && response <= player.moneyLeft) {
             player.bet = parseInt(response)
         } else {
-            this.promptText("Bet must be a number between 0 and " + String(player.moneyLeft))
-            await this.betting(player);
+            this.displayText("Bet must be a number between 0 and " + String(player.moneyLeft))
+            this.delay(1000)
+            //await this.betting(player);
         }
     }
 
@@ -392,7 +392,12 @@ class Game {
     playerWin(player) {
         console.log(String(player.name) + " beat the dealer!");
         player.win(player.bet);
-        this.updateScoreBoard(player)
+
+        let id = String(player.name) + 'balance'
+        const playerBalanceP = document.getElementById(id)
+
+        playerBalanceP.className = "player-balance win"
+        playerBalanceP.textContent = '+£' + String(player.bet)
 
         if (this.isSplit) {
             return;
@@ -403,7 +408,12 @@ class Game {
         this.displayText("The dealer beat " + String(player.name) + "!")
         this.delay(500)
         player.lose(player.bet)
-        this.updateScoreBoard(player)
+
+        let id = String(player.name) + 'balance'
+        const playerBalanceP = document.getElementById(id)
+
+        playerBalanceP.className = "player-balance lose"
+        playerBalanceP.textContent = '-£' + String(player.bet)
 
         if (this.isSplit) {
             return;
@@ -621,6 +631,12 @@ class Game {
             let player = this.players[i];
             if (player.isStillActive) {
                 await this.betting(player);
+            }
+        }
+
+        for (let i in this.players) {
+            let player = this.players[i];
+            if (player.isStillActive) {
                 this.playerDeal(player);
             }
         }
@@ -648,6 +664,8 @@ class Game {
             await this.replay();
         } else {
             this.displayText("All players out of money! Game over")
+            this.delay(2000)
+            this.restartGame()
         }
     }
 }

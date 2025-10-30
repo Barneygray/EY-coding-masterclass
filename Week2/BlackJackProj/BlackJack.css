@@ -266,3 +266,18 @@ body {
   border-color: red;
 }
 
+.win {
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-bottom: 10px;
+    color: rgb(15, 216, 15);
+}
+
+.lose {
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-bottom: 10px;
+    color: rgb(253, 15, 15);
+}
