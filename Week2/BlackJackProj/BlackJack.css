@@ -20,11 +20,17 @@ body {
     align-items: center;
 }
 
+.deck{
+    grid-area: deck;
+    height: 200px;
+    width: 120px;
+}
+
 
 .action-prompt-box {
     grid-area: prompt;
     max-width: 900px;
-    height: 150px;
+    height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,7 +67,7 @@ body {
     grid-template-areas:
     ". . . . . ."
     "dealer dealer dealer dealer dealer dealer"
-    ". . prompt prompt . ."
+    ". deck prompt prompt . ."
     "players players players players players players";
     width: 800px;
     height: 600px;

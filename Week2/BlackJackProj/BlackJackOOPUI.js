@@ -224,6 +224,7 @@ class Game {
         actionPromptBox.innerHTML = ""
         actionPromptBox.appendChild(promptText)
         actionPromptBox.appendChild(inputBox)
+        inputBox.focus();
 
         return new Promise((resolve) => {
             inputBox.addEventListener("keydown", (e) => {
@@ -254,9 +255,11 @@ class Game {
         inputBox.className = "input-box"
         inputBox.type = "text"
 
+
         actionPromptBox.innerHTML = ""
         actionPromptBox.appendChild(promptText)
         actionPromptBox.appendChild(inputBox)
+        inputBox.focus();
 
         return new Promise((resolve) => {
             inputBox.addEventListener("keydown", (e) => {
