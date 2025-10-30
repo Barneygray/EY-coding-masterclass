@@ -440,7 +440,7 @@ class Game {
 
         if (this.isBlackJack(player)) {
             this.displayText('BlackJack!')
-            this.delay(500)
+            this.delay(1000)
         }
     }
 
@@ -512,6 +512,7 @@ class Game {
             const dd = await this.doubleDown(player)
             if (dd) {
                 this.delay(500);
+                this.calcBestHand(player)
                 return Promise.resolve();
             }
         } 
@@ -526,7 +527,11 @@ class Game {
     }
 
     async playerTurn(player, hand=1) {
-        while (!player.hand.isBust() && !this.isBlackJack(player)) {
+        if (this.isBlackJack(player)) {
+            return;
+        }
+
+        while (!player.hand.isBust()) {
         const choice = await this.createPromptButtonResponse(String(player.name) +", Hit or Stand?", "Hit", "Stand");
 
             if (choice === "Hit") {
@@ -538,7 +543,7 @@ class Game {
 
         if (player.hand.isBust()) {
             this.displayText("Bust!")
-            this.delay(500)
+            this.delay(1000)
         }
 
         this.calcBestHand(player)
@@ -587,6 +592,7 @@ class Game {
     }
 
     async restartGame() {
+        this.delay(1000)
         const restart = await this.createPromptButtonResponse("Restart?", "Yes", "No")
 
         if (restart === "Yes") {
