@@ -536,7 +536,7 @@ class Game {
             }
         }
 
-        if (player.hand.isBust) {
+        if (player.hand.isBust()) {
             this.displayText("Bust!")
             this.delay(500)
         }
