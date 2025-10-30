@@ -158,11 +158,6 @@ class Hand {
 
 
     isBust() {
-        const promptText = document.createElement('p')
-        promptText.textContent = "Bust! You Lose"
-
-        actionPromptBox.innerHTML = ""
-        actionPromptBox.appendChild(promptText)
         return(this.getPlayerTotal() > 21)
     }
 
@@ -217,9 +212,10 @@ class Game {
         this.play()
     }
 
-    async createPromptTextResponse(prompt) {
+    async createPromptNumResponse(prompt) {
         const promptText = document.createElement('p')
         promptText.textContent = prompt
+        promptText.className = "prompt-text"
 
         const inputBox = document.createElement('input')
         inputBox.className = "input-box"
@@ -232,8 +228,51 @@ class Game {
         return new Promise((resolve) => {
             inputBox.addEventListener("keydown", (e) => {
                 if (e.key === "Enter") {
-                    const input = e.target.value
-                    resolve(input)
+                    const input = e.target.value;
+                    const i = e.target;
+                    const value = i.value.trim();
+
+                    if (/^\d+$/.test(value)) {
+                        resolve(input)
+                    } else {
+                        actionPromptBox.classList.add("shake")
+                        setTimeout(() => {
+                            actionPromptBox.classList.remove("shake")
+                        }, 300)
+                    }
+                }
+            })
+        })
+    } 
+
+    async createPromptTextResponse(prompt) {
+        const promptText = document.createElement('p')
+        promptText.textContent = prompt
+        promptText.className = "prompt-text"
+
+        const inputBox = document.createElement('input')
+        inputBox.className = "input-box"
+        inputBox.type = "text"
+
+        actionPromptBox.innerHTML = ""
+        actionPromptBox.appendChild(promptText)
+        actionPromptBox.appendChild(inputBox)
+
+        return new Promise((resolve) => {
+            inputBox.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    const input = e.target.value;
+                    const i = e.target;
+                    const value = i.value.trim();
+
+                    if (value !== "") {
+                        resolve(input)
+                    } else {
+                        actionPromptBox.classList.add("shake")
+                        setTimeout(() => {
+                            actionPromptBox.classList.remove("shake")
+                        }, 300)
+                    }
                 }
             })
         })
@@ -242,6 +281,7 @@ class Game {
     async createPromptButtonResponse(prompt, input1, input2) {
         const promptText = document.createElement('p')
         promptText.textContent = prompt
+        promptText.className = "prompt-text"
 
         const button1 = document.createElement('button')
         button1.className = "first-button"
@@ -270,13 +310,15 @@ class Game {
     displayText(prompt) {
         const promptText = document.createElement('p')
         promptText.textContent = prompt
+        promptText.className = "prompt-text"
 
         actionPromptBox.innerHTML = ""
         actionPromptBox.appendChild(promptText)
     }
 
     async playerSetup() {
-        const numPlayers = await this.createPromptTextResponse("How many players? (1-4):")
+        this.players = [];
+        const numPlayers = await this.createPromptNumResponse("How many players? (1-4):")
         this.numPlayers = parseInt(numPlayers)
 
         if (!isNaN(Number(this.numPlayers)) && this.numPlayers >= 1 && this.numPlayers <= 4) {
@@ -313,7 +355,7 @@ class Game {
 
     async betting(player) {
         player.left();
-        const response = await this.createPromptTextResponse(player.name + ", input bet:")
+        const response = await this.createPromptNumResponse(player.name + ", input bet:")
     
         if (!isNaN(Number(response)) && response > 0 && response <= player.moneyLeft) {
             player.bet = parseInt(response)
@@ -329,7 +371,7 @@ class Game {
         if (playAgain === "Yes") {
             await this.play();
         } else {
-            this.endGame()
+            this.restartGame()
         }
     }
 
@@ -358,7 +400,8 @@ class Game {
     }
 
     playerLose(player) {
-        console.log("The dealer beat " + String(player.name) + "!");
+        this.displayText("The dealer beat " + String(player.name) + "!")
+        this.delay(500)
         player.lose(player.bet)
         this.updateScoreBoard(player)
 
@@ -366,7 +409,8 @@ class Game {
             return;
         }
         if (player.moneyLeft === 0) {
-            console.log("Out of Money - Game Over!")
+            this.displayText("Out of Money - Game Over!")
+            this.delay(500)
             player.isStillActive = false;
         } else {
             return;
@@ -374,7 +418,8 @@ class Game {
     }
 
     draw(player) {
-        console.log("Player and Dealer BlackJack - Tie!")
+        this.displayText(String(player.name) + " and the Dealer got BlackJack - Tie!")
+        this.delay(500)
         if (this.isSplit) {
             return;
         }
@@ -392,6 +437,11 @@ class Game {
         setTimeout(() => {
             player.hand.addCard(this.deck.drawCard(), player.name, 1);
         }, 500)
+
+        if (this.isBlackJack(player)) {
+            this.displayText('BlackJack!')
+            this.delay(500)
+        }
     }
 
     async splitPair(player) {
@@ -426,8 +476,10 @@ class Game {
     async doubleDown(player) {
         const choice = await this.createPromptButtonResponse(String(player.name) + ", Double Down?", "Yes", "No")
         if (choice === "Yes") {
-            player.bet*=2
-        }
+            player.bet*=2;
+            player.hand.addCard(this.deck.drawCard(), player.name, 1)
+            return true
+        } 
     }
 
     dealerDeal() {
@@ -443,8 +495,13 @@ class Game {
     isBlackJack(player) {
         return (player.hand.getPlayerTotal() === 21)
     }
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+    }
 
     async userChoice(player) {
+        await this.delay(500)
+
         if (this.isSplittableHand(player) && player.moneyLeft >= player.bet*2) {
             const choice = await this.createPromptButtonResponse(String(player.name) + ", Split?", "Yes", "No")
             if (choice === "Yes") {
@@ -452,7 +509,11 @@ class Game {
                 await this.splitPair(player)
             }
         } else if ([9, 10, 11].includes(player.hand.getPlayerTotal()) && player.moneyLeft >= player.bet*2) {
-            await this.doubleDown(player)
+            const dd = await this.doubleDown(player)
+            if (dd) {
+                this.delay(500);
+                return Promise.resolve();
+            }
         } 
         
         await this.playerTurn(player)
@@ -470,15 +531,14 @@ class Game {
 
             if (choice === "Hit") {
                 player.hand.addCard(this.deck.drawCard(), player.name, hand)
-                console.log("You have: " + player.hand.toString())
-                console.log("Value: " + player.hand.getPlayerTotal())
             } else if (choice === "Stand") {
                 break;
             }
         }
 
-        if (this.isBlackJack(player)) {
-            this.displayText('BlackJack!')
+        if (player.hand.isBust) {
+            this.displayText("Bust!")
+            this.delay(500)
         }
 
         this.calcBestHand(player)
@@ -504,7 +564,12 @@ class Game {
     whoWins(player) {
         if (this.dealerHand.getDealerTotal() > 21 || player.hand.getPlayerTotal() > this.dealerHand.getDealerTotal() && !player.hand.isBust()) {
             this.playerWin(player);
-        } else {
+        } else if (this.isBlackJack(player) && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length == 2) {
+            this.draw(player)
+        } else if (this.isBlackJack(player) && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length > 2) {
+            this.playerWin(player)
+        }
+        else {
             this.playerLose(player);
         }
     }
@@ -521,6 +586,18 @@ class Game {
         }
     }
 
+    async restartGame() {
+        const restart = await this.createPromptButtonResponse("Restart?", "Yes", "No")
+
+        if (restart === "Yes") {
+            document.getElementById("dealers-hand").innerHTML = ""
+            document.getElementById("players-hands").innerHTML = ""
+            this.start()
+        } else {
+            this.endGame()
+        }
+    }
+
 
     async play() {
         this.gameSetup()
@@ -528,16 +605,16 @@ class Game {
         for (let i in this.players){
             let player = this.players[i];
             document.getElementById(player.name).innerHTML = ""
+            const playerBalance = document.createElement('p')
+            playerBalance.textContent = player.name + ': £' + player.moneyLeft
+            playerBalance.id = String(player.name + 'balance')
+            playerBalance.className = "player-balance"
+            document.getElementById(player.name).appendChild(playerBalance)
         }
         for (let i in this.players) {
             let player = this.players[i];
             if (player.isStillActive) {
                 await this.betting(player);
-                const playerBalance = document.createElement('p')
-                playerBalance.textContent = player.name + ': £' + player.moneyLeft
-                playerBalance.id = String(player.name + 'balance')
-                playerBalance.className = "player-balance"
-                document.getElementById(player.name).appendChild(playerBalance)
                 this.playerDeal(player);
             }
         }
