@@ -13,8 +13,8 @@ body {
 
 .dealers-hand {
     grid-area: dealer;
-    width: 300px;
-    height: 150px;
+    width: 900px;
+    height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,10 +22,13 @@ body {
 
 .balance-box {
     grid-area: balance;
-    background-color: rgb(251, 221, 190);
+    background-color: green;
     color: black;
-    width: 150px;
+    width: 300px;
     height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .action-prompt-box {
@@ -41,11 +44,11 @@ body {
 .players-hands {
     grid-area: players;
     width: 900px;
-    height: 150px;
+    height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 150px;
 }
 
 .controls {
@@ -62,10 +65,10 @@ body {
     display: grid;
     grid-template-areas:
     ". . . . . ."
-    ". . dealer dealer . balance"
+    "dealer dealer dealer dealer dealer dealer"
     ". . prompt prompt . ."
-    "players players players players players players"
-    ". . . . . .";
+    ". . balance balance . ."
+    "players players players players players players";
     width: 800px;
     height: 600px;
 }
@@ -76,36 +79,113 @@ body {
     justify-content: center;
     align-items: center;
     gap: 15px;
+    position: relative;
+    max-width: 900px;
+    width: fit-content;
 }
 
 .red-card {
-    display: flex;
-    height: 120px;
-    width: 80px;
+    color: crimson;
+    width: 120px;
+    height: 180px;
     background-color: white;
-    color: red;
-    border-radius: 15px;
-    margin: 2px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px;
+    margin-left: -100px;
+    padding: 5px;
+    transform: translateX(50px);
+    position: relative;
+}
+
+.red-card p {
+  margin: 0;
 }
 
 .black-card {
-    display: flex;
-    height: 120px;
-    width: 80px;
+    color: #333;
+    width: 120px;
+    height: 180px;
     background-color: white;
-    color: black;
-    border-radius: 15px;
-    margin: 2px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px;
+    margin-left: -100px;
+    padding: 5px;
+    transform: translateX(50px);
+    position: relative;
 }
 
+.top-left {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.bottom-right {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    transform: rotate(180deg);
+}
+
+.black-card p {
+  margin: 0;
+}
+
+.card-image {
+    max-width: 70%;
+    max-height: 50%;
+    object-fit: contain;
+}
 
 .hand { 
-    max-width: 900px;
-    display: flex;
+    max-width: 100%;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    position:relative;
+    height: 300px;
+    margin: 0 auto;
 }
 
+.card-back {
+    position: absolute;
+    width: 105px;
+    height: 165px;
+    border-radius: 10px;
+    border: 0;
+    background: repeating-linear-gradient(
+    45deg,
+    #004080,
+    #004080 10px,
+    #ffffff 10px,
+    #ffffff 20px
+    );
+    padding: 5px;
+}
+
+.player-balance {
+    position: absolute;
+    font-size: 20px;
+    color: black;
+    top: 0;
+    white-space: nowrap;
+    width: auto;
+}
 .input-box {
 
 }

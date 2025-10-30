@@ -16,7 +16,7 @@ class Card {
     }
 
     toString() {
-        return `${this.rank} of ${this.suit}`;
+        return `${this.rank}${this.suit}`;
     }
 
     getvalue() {
@@ -50,7 +50,7 @@ class Deck {
     }
 
     initializeDeck() {
-        const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+        const suits = ['❤', '♦', '♣', '♠'];
         const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         //TODO:reduce array methods
         suits.forEach(suit => {
@@ -81,26 +81,43 @@ class Hand {
 
     addCard(card, playerID, hand) {
         this.cards.push(card)
+        setTimeout(() => {
+            const newCardDiv = document.createElement('div')
+            if (['♣', '♠'].includes(card.suit)) {
+                newCardDiv.classList.add('black-card')
+            } else {
+                newCardDiv.classList.add('red-card')
+            }
+            newCardDiv.id = card.toString()
 
-        const newCardDiv = document.createElement('div')
-        if (['Clubs', 'Spades'].includes(card.suit)) {
-            newCardDiv.classList.add('black-card')
-        } else {
-            newCardDiv.classList.add('red-card')
-        }
+            const cardText1 = document.createElement('p')
+            cardText1.textContent = card.toString()
+            cardText1.className = "top-left"
+            newCardDiv.appendChild(cardText1)
+            
+            const cardText2 = document.createElement('p')
+            cardText2.textContent = card.toString()
+            cardText2.className = "bottom-right"
+            newCardDiv.appendChild(cardText2)
 
-        newCardDiv.id = card.toString()
+            const cardImg = document.createElement('img')
+            cardImg.src = 'Ernst-Young-Logo.png'
+            cardImg.className = 'card-image'
+            newCardDiv.appendChild(cardImg)
 
-        const cardText = document.createElement('p')
-        cardText.textContent = card.toString()
-        newCardDiv.appendChild(cardText)
-
-        if (playerID !== "dealers-hand") {
-            const playerHandDiv = document.getElementById(playerID + "-hand-" + String(hand))
-            playerHandDiv.appendChild(newCardDiv)
-        } else {
-            dealerHandDiv.appendChild(newCardDiv)
-        }
+            if (playerID !== "dealers-hand" && playerID !== "dealers-hand-back") {
+                const playerHandDiv = document.getElementById(playerID + "-hand-" + String(hand))
+                playerHandDiv.appendChild(newCardDiv)
+            } else if (playerID !== "dealers-hand") {
+                const cardBack = document.createElement('div')
+                cardBack.classList.add('card-back')
+                cardBack.id = "dealer-card-back"
+                dealerHandDiv.appendChild(newCardDiv)
+                newCardDiv.appendChild(cardBack)
+            } else {
+                dealerHandDiv.appendChild(newCardDiv)
+            }
+        }, 750)
     }
 
     getPlayerTotal() {
@@ -271,12 +288,14 @@ class Game {
                 const newPlayerDiv = document.createElement('div')
                 newPlayerDiv.classList.add('player')
                 newPlayerDiv.id = p.name
-                playersDiv.appendChild(newPlayerDiv)
 
                 const playerBalance = document.createElement('p')
                 playerBalance.textContent = p.name + ': £' + p.moneyLeft
                 playerBalance.id = String(p.name + 'balance')
-                balanceBox.appendChild(playerBalance)
+                playerBalance.className = "player-balance"
+                newPlayerDiv.appendChild(playerBalance)
+
+                playersDiv.appendChild(newPlayerDiv)
 
             }
         } else {
@@ -370,7 +389,9 @@ class Game {
         document.getElementById(player.name).appendChild(handDiv)
 
         player.hand.addCard(this.deck.drawCard(), player.name, 1);
-        player.hand.addCard(this.deck.drawCard(), player.name, 1);
+        setTimeout(() => {
+            player.hand.addCard(this.deck.drawCard(), player.name, 1);
+        }, 500)
     }
 
     async splitPair(player) {
@@ -411,7 +432,12 @@ class Game {
 
     dealerDeal() {
         this.dealerHand = new Hand()
-        this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand")
+        setTimeout(() => {
+            this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand");
+            setTimeout(() => {
+                this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand-back")
+            }, 500);
+        }, 500);
     }
 
     isBlackJack(player) {
@@ -433,7 +459,9 @@ class Game {
     }
 
     isSplittableHand(player) {
-        return player.hand.cards[0].rank === player.hand.cards[1].rank
+        setTimeout(() => {
+            return (player.hand.cards[0].rank === player.hand.cards[1].rank)
+        }, 500)
     }
 
     async playerTurn(player, hand=1) {
@@ -466,17 +494,10 @@ class Game {
     }
 
     dealerTurn() {
-        this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand")
-
-        console.log(" ")
-        console.log("Dealer flips: " + this.dealerHand.toString());
-        console.log("Dealer's score: " + this.dealerHand.getDealerTotal());
-
+        const cardBack = document.getElementById("dealer-card-back");
+        cardBack.remove();
         while (this.dealerHand.getDealerTotal() < 17 && this.dealerHand.getDealerTotal() < this.highestScore) {
             this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand");
-            console.log(" ")
-            console.log("Dealer has: " + this.dealerHand.toString());
-            console.log("Dealer's score: " + this.dealerHand.getDealerTotal());
         }
     }
 
@@ -512,6 +533,11 @@ class Game {
             let player = this.players[i];
             if (player.isStillActive) {
                 await this.betting(player);
+                const playerBalance = document.createElement('p')
+                playerBalance.textContent = player.name + ': £' + player.moneyLeft
+                playerBalance.id = String(player.name + 'balance')
+                playerBalance.className = "player-balance"
+                document.getElementById(player.name).appendChild(playerBalance)
                 this.playerDeal(player);
             }
         }
