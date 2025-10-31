@@ -51,7 +51,7 @@ class Deck {
 
     initializeDeck() {
         const suits = ['❤', '♦', '♣', '♠'];
-        const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const ranks = ['A']//'2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         //TODO:reduce array methods
         suits.forEach(suit => {
             ranks.forEach(rank => {
@@ -306,6 +306,13 @@ class Game {
             button2.addEventListener("click", () => {
                 resolve(input2)
             })
+            document.addEventListener('keydown', (event) => {
+                if (event.key === input1[0].toLowerCase()) {
+                    resolve(input1)
+                } else if (event.key === input2[0].toLowerCase()) {
+                    resolve(input2)
+                }
+            })
         })
 
     }
@@ -393,7 +400,6 @@ class Game {
     }
 
     playerWin(player) {
-        console.log(String(player.name) + " beat the dealer!");
         player.win(player.bet);
 
         let id = String(player.name) + 'balance'
@@ -438,7 +444,7 @@ class Game {
         }
     }
 
-    playerDeal(player) {
+    async playerDeal(player) {
         player.hand = new Hand();
 
         const handDiv = document.createElement('div')
@@ -455,6 +461,8 @@ class Game {
             this.displayText('BlackJack!')
             this.delay(1000)
         }
+
+        await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     async splitPair(player) {
@@ -495,7 +503,7 @@ class Game {
         } 
     }
 
-    dealerDeal() {
+    async dealerDeal() {
         this.dealerHand = new Hand()
         setTimeout(() => {
             this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand");
@@ -503,6 +511,8 @@ class Game {
                 this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand-back")
             }, 500);
         }, 500);
+
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     isBlackJack(player) {
@@ -513,9 +523,9 @@ class Game {
     }
 
     async userChoice(player) {
-        await this.delay(500)
-
+        console.log(player.hand)
         if (this.isSplittableHand(player) && player.moneyLeft >= player.bet*2) {
+            console.log('aaa')
             const choice = await this.createPromptButtonResponse(String(player.name) + ", Split?", "Yes", "No")
             if (choice === "Yes") {
                 this.isSplit = true;
@@ -571,12 +581,16 @@ class Game {
 
     }
 
-    dealerTurn() {
+    async dealerTurn() {
+        await new Promise(resolve => setTimeout(resolve, 2000));
         const cardBack = document.getElementById("dealer-card-back");
         cardBack.remove();
         while (this.dealerHand.getDealerTotal() < 17 && this.dealerHand.getDealerTotal() < this.highestScore) {
+            this.delay(500)
             this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand");
         }
+
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     whoWins(player) {
@@ -640,21 +654,20 @@ class Game {
         for (let i in this.players) {
             let player = this.players[i];
             if (player.isStillActive) {
-                this.playerDeal(player);
+                await this.playerDeal(player);
             }
         }
-        this.dealerDeal()
+
+        await this.dealerDeal()
 
         for (let i in this.players) {
             let player = this.players[i];
             if (player.isStillActive) {
-                console.log(" ")
-                console.log(String(player.name) + "'s turn:")
                 await this.userChoice(player)
             }
         }
 
-        this.dealerTurn()
+        await this.dealerTurn()
 
         for (let i in this.players) {
             let player = this.players[i]
@@ -662,7 +675,9 @@ class Game {
                 this.whoWins(player);
             }
         }
+    
         
+
         if (this.checkActivePlayer()) {
             await this.replay();
         } else {
