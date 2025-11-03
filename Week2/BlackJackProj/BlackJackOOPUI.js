@@ -6,6 +6,7 @@ const doubleDownButton = document.querySelector('.double-down-button')
 const splitButton = document.querySelector('.split-button')
 const balanceBox = document.querySelector('.balance-box')
 const actionPromptBox = document.querySelector('.action-prompt-box')
+const deckHTML = document.querySelector('.deck')
 
 class Card {
     value;
@@ -51,7 +52,7 @@ class Deck {
 
     initializeDeck() {
         const suits = ['❤', '♦', '♣', '♠'];
-        const ranks = ['A']//'2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         //TODO:reduce array methods
         suits.forEach(suit => {
             ranks.forEach(rank => {
@@ -80,6 +81,8 @@ class Hand {
     }
 
     addCard(card, playerID, hand) {
+        const cardBack = document.createElement('div')
+
         this.cards.push(card)
         setTimeout(() => {
             const newCardDiv = document.createElement('div')
@@ -105,17 +108,54 @@ class Hand {
             cardImg.className = 'card-image'
             newCardDiv.appendChild(cardImg)
 
+            const movingCard = newCardDiv.cloneNode(true);
+
+            cardBack.classList.add('card-back')
+            cardBack.id = "dealer-card-back"
+            movingCard.appendChild(cardBack)
+            document.body.appendChild(movingCard);
+
+            const deckRect = deckHTML.getBoundingClientRect();
+            
+            movingCard.style.position = 'absolute';
+            movingCard.style.left = `${deckRect.left-100}px`;
+            movingCard.style.top = `${deckRect.top}px`;            
+            movingCard.style.margin = '0'; // override margin
+            movingCard.style.transform = 'none'; // reset transform
+            movingCard.style.transition = 'transform 0.8s ease-in-out';
+
+
             if (playerID !== "dealers-hand" && playerID !== "dealers-hand-back") {
                 const playerHandDiv = document.getElementById(playerID + "-hand-" + String(hand))
-                playerHandDiv.appendChild(newCardDiv)
+                const playerHandRect = playerHandDiv.getBoundingClientRect();
+                setTimeout(() => {
+                    movingCard.style.transform = `translate(${playerHandRect.left - deckRect.left}px, ${playerHandRect.top - deckRect.top}px)`;
+                }, 100)
+                setTimeout (() => {
+                    movingCard.remove();
+                    playerHandDiv.appendChild(newCardDiv)
+                }, 800)
             } else if (playerID !== "dealers-hand") {
-                const cardBack = document.createElement('div')
-                cardBack.classList.add('card-back')
-                cardBack.id = "dealer-card-back"
-                dealerHandDiv.appendChild(newCardDiv)
-                newCardDiv.appendChild(cardBack)
+                const dealerHandRect = dealerHandDiv.getBoundingClientRect();
+                setTimeout(() => {
+                    movingCard.style.transform = `translate(${dealerHandRect.left + deckRect.left}px, ${dealerHandRect.top - deckRect.top}px)`;
+                }, 100)
+                setTimeout(() => {
+                    movingCard.remove()
+                    cardBack.classList.add('card-back')
+                    cardBack.id = "dealer-card-back"
+                    newCardDiv.appendChild(cardBack)
+                    dealerHandDiv.appendChild(newCardDiv)
+                }, 800)
             } else {
-                dealerHandDiv.appendChild(newCardDiv)
+                const dealerHandRect = dealerHandDiv.getBoundingClientRect();
+                setTimeout(() => {
+                    movingCard.style.transform = `translate(${dealerHandRect.left + deckRect.left}px, ${dealerHandRect.top - deckRect.top}px)`;
+                }, 100)
+                setTimeout(() => {
+                    movingCard.remove()
+                    dealerHandDiv.appendChild(newCardDiv)
+                }, 800)
             }
         }, 750)
     }
@@ -317,13 +357,15 @@ class Game {
 
     }
 
-    displayText(prompt) {
+    async displayText(prompt) {
         const promptText = document.createElement('p')
         promptText.textContent = prompt
         promptText.className = "prompt-text"
 
         actionPromptBox.innerHTML = ""
         actionPromptBox.appendChild(promptText)
+
+        await new Promise (resolve => setTimeout(resolve, 1000))
     }
 
     async playerSetup() {
@@ -518,6 +560,7 @@ class Game {
     isBlackJack(player) {
         return (player.hand.getPlayerTotal() === 21)
     }
+
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms))
     }
@@ -544,9 +587,7 @@ class Game {
     }
 
     isSplittableHand(player) {
-        setTimeout(() => {
-            return (player.hand.cards[0].rank === player.hand.cards[1].rank)
-        }, 500)
+        return (player.hand.cards[0].rank === player.hand.cards[1].rank)
     }
 
     async playerTurn(player, hand=1) {
@@ -565,8 +606,7 @@ class Game {
         }
 
         if (player.hand.isBust()) {
-            this.displayText("Bust!")
-            this.delay(1000)
+            await this.displayText("Bust!")
         }
 
         this.calcBestHand(player)
@@ -594,7 +634,7 @@ class Game {
     }
 
     whoWins(player) {
-        if (this.dealerHand.getDealerTotal() > 21 || player.hand.getPlayerTotal() > this.dealerHand.getDealerTotal() && !player.hand.isBust()) {
+        if (this.dealerHand.getDealerTotal() > 21 && !player.hand.isBust()|| player.hand.getPlayerTotal() > this.dealerHand.getDealerTotal() && !player.hand.isBust()) {
             this.playerWin(player);
         } else if (this.isBlackJack(player) && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length == 2) {
             this.draw(player)

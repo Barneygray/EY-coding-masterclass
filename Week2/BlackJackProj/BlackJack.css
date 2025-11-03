@@ -29,7 +29,7 @@ body {
 
 .action-prompt-box {
     grid-area: prompt;
-    max-width: 900px;
+    width: 350px;
     height: 200px;
     display: flex;
     justify-content: center;
@@ -69,8 +69,9 @@ body {
     "dealer dealer dealer dealer dealer dealer"
     ". deck prompt prompt . ."
     "players players players players players players";
-    width: 800px;
-    height: 600px;
+    width: 900px;
+    height: 800px;
+    position:relative;
 }
 
 
@@ -103,6 +104,7 @@ body {
     padding: 5px;
     transform: translateX(50px);
     position: relative;
+    transition: transform 1s ease-in-out;
 }
 
 .red-card p {
@@ -125,6 +127,7 @@ body {
     padding: 5px;
     transform: translateX(50px);
     position: relative;
+    transition: transform 1s ease-in-out;
 }
 
 .top-left {
