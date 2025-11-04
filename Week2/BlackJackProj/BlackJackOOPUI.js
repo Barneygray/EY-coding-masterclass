@@ -780,6 +780,7 @@ class Game {
                 this.whoWins(player);
             } else if (player.isStillActive && player.didSplit) {
                 this.whoWinsSplit(player);
+                player.didSplit = false;
             }
         }
         
