@@ -24,6 +24,7 @@ body {
     grid-area: deck;
     height: 200px;
     width: 120px;
+    
 }
 
 
@@ -84,6 +85,26 @@ body {
     max-width: 900px;
     width: fit-content;
 }
+.card {
+    width: 120px;
+    height: 180px;
+    background-color: white;
+    border: 2px solid #333;
+    border-radius: 10px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px;
+    margin-left: -100px;
+    padding: 5px;
+    transform: translateX(50px);
+    position: relative;
+    transition: transform 1s ease-in-out;
+}
 
 .red-card {
     color: crimson;
@@ -93,6 +114,28 @@ body {
     border: 2px solid #333;
     border-radius: 10px;
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px;
+    margin-left: -100px;
+    padding: 5px;
+    transform: translateX(50px);
+    position: relative;
+    transition: transform 1s ease-in-out;
+}
+
+.deck-card {
+    color: crimson;
+    width: 120px;
+    height: 180px;
+    background-color: white;
+    border: 2px solid #333;
+    border-radius: 10px;
+    box-shadow: 4px 4px 16px rgba(0, 0, 0, 1);
     display: flex;
     flex-direction: column;
     align-items: flex-start;

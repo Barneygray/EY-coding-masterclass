@@ -129,7 +129,7 @@ class Hand {
                 const playerHandDiv = document.getElementById(playerID + "-hand-" + String(hand))
                 const playerHandRect = playerHandDiv.getBoundingClientRect();
                 setTimeout(() => {
-                    movingCard.style.transform = `translate(${playerHandRect.left - deckRect.left}px, ${playerHandRect.top - deckRect.top}px)`;
+                    movingCard.style.transform = `translate(${playerHandRect.left - deckRect.left + 50}px, ${playerHandRect.top - deckRect.top+ 100}px)`;
                 }, 100)
                 setTimeout (() => {
                     movingCard.remove();
@@ -138,7 +138,7 @@ class Hand {
             } else if (playerID !== "dealers-hand") {
                 const dealerHandRect = dealerHandDiv.getBoundingClientRect();
                 setTimeout(() => {
-                    movingCard.style.transform = `translate(${dealerHandRect.left + deckRect.left}px, ${dealerHandRect.top - deckRect.top}px)`;
+                    movingCard.style.transform = `translate(${dealerHandRect.left + deckRect.left - 400}px, ${dealerHandRect.top - deckRect.top}px)`;
                 }, 100)
                 setTimeout(() => {
                     movingCard.remove()
@@ -150,7 +150,7 @@ class Hand {
             } else {
                 const dealerHandRect = dealerHandDiv.getBoundingClientRect();
                 setTimeout(() => {
-                    movingCard.style.transform = `translate(${dealerHandRect.left + deckRect.left}px, ${dealerHandRect.top - deckRect.top}px)`;
+                    movingCard.style.transform = `translate(${dealerHandRect.left + deckRect.left - 400}px, ${dealerHandRect.top - deckRect.top}px)`;
                 }, 100)
                 setTimeout(() => {
                     movingCard.remove()
@@ -441,37 +441,44 @@ class Game {
         playerBalanceP.textContent = String(player.name) + ': £' + String(player.moneyLeft)
     }
 
-    playerWin(player) {
-        player.win(player.bet);
-
+    async displayBetOutcome(player, outcome) {
         let id = String(player.name) + 'balance'
         const playerBalanceP = document.getElementById(id)
 
-        playerBalanceP.className = "player-balance win"
-        playerBalanceP.textContent = '+£' + String(player.bet)
+        playerBalanceP.className = String("player-balance " + outcome)
+
+        if (outcome === "win") {
+            playerBalanceP.textContent = '+£' + String(player.bet)
+        } else {
+            playerBalanceP.textContent = '-£' + String(player.bet)
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        playerBalanceP.textContent = ""
+        playerBalanceP.textContent = String(player.name) + ': £' + String(player.moneyLeft)
+    }
+
+    async playerWin(player) {
+        player.win(player.bet);
+
+        await this.displayBetOutcome(player, "win")
 
         if (this.isSplit) {
             return;
         }
     }
 
-    playerLose(player) {
-        this.displayText("The dealer beat " + String(player.name) + "!")
-        this.delay(500)
+    async playerLose(player) {
+        await this.displayText("The dealer beat " + String(player.name) + "!")
         player.lose(player.bet)
 
-        let id = String(player.name) + 'balance'
-        const playerBalanceP = document.getElementById(id)
-
-        playerBalanceP.className = "player-balance lose"
-        playerBalanceP.textContent = '-£' + String(player.bet)
+        await this.displayBetOutcome(player, "lose")
 
         if (this.isSplit) {
             return;
         }
         if (player.moneyLeft === 0) {
-            this.displayText("Out of Money - Game Over!")
-            this.delay(500)
+            await this.displayText("Out of Money - Game Over!")
             player.isStillActive = false;
         } else {
             return;
@@ -566,9 +573,7 @@ class Game {
     }
 
     async userChoice(player) {
-        console.log(player.hand)
         if (this.isSplittableHand(player) && player.moneyLeft >= player.bet*2) {
-            console.log('aaa')
             const choice = await this.createPromptButtonResponse(String(player.name) + ", Split?", "Yes", "No")
             if (choice === "Yes") {
                 this.isSplit = true;
@@ -721,8 +726,7 @@ class Game {
         if (this.checkActivePlayer()) {
             await this.replay();
         } else {
-            this.displayText("All players out of money! Game over")
-            this.delay(2000)
+            await this.displayText("All players out of money! Game over")
             this.restartGame()
         }
     }
