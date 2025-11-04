@@ -725,7 +725,6 @@ class Game {
     }
 
     async restartGame() {
-        this.delay(1000)
         const restart = await this.createPromptButtonResponse("Restart?", "Yes", "No")
 
         if (restart === "Yes") {
@@ -788,7 +787,8 @@ class Game {
             await this.replay();
         } else {
             await this.displayText("All players out of money! Game over")
-            this.restartGame()
+            await new Promise(resolve => setTimeout(resolve, 1000))
+            await this.restartGame()
         }
     }
 }
