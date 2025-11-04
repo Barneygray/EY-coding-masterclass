@@ -551,14 +551,14 @@ class Game {
         const lastChild2 = document.getElementById(String(player.name) + "-hand-1").lastElementChild
         document.getElementById(String(player.name) + "-hand-1").removeChild(lastChild2)
 
-        this.displayText("Playing Hand 1:")
+        await this.displayText("Playing Hand 1:")
         player.hand = this.userHandSplit1
         await this.playerTurn(player)
         this.userHandSplit1 = player.hand
 
         this.isSplit = false;
 
-        this.displayText("Playing Hand 2: ")
+        await this.displayText("Playing Hand 2: ")
         player.hand = this.userHandSplit2
         await this.playerTurn(player, 2)
         this.userHandSplit2 = player.hand
