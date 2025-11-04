@@ -1,10 +1,5 @@
 const dealerHandDiv = document.querySelector('.dealers-hand')
 const playersDiv = document.querySelector('.players-hands')
-const hitButton = document.querySelector('.hit-button')
-const standButton = document.querySelector('.stand-button')
-const doubleDownButton = document.querySelector('.double-down-button')
-const splitButton = document.querySelector('.split-button')
-const balanceBox = document.querySelector('.balance-box')
 const actionPromptBox = document.querySelector('.action-prompt-box')
 const deckHTML = document.querySelector('.deck')
 
@@ -74,90 +69,100 @@ class Deck {
 
 }
 
-
 class Hand {
     constructor() {
         this.cards = [];
     }
 
-    addCard(card, playerID, hand) {
+    cardAnimation(newCardDiv, playerID, hand) {
         const cardBack = document.createElement('div')
+        const movingCard = newCardDiv.cloneNode(true);
 
+        cardBack.classList.add('card-back')
+        cardBack.id = "dealer-card-back"
+        movingCard.appendChild(cardBack)
+        document.body.appendChild(movingCard);
+
+        const deckRect = deckHTML.getBoundingClientRect();
+        
+        movingCard.style.position = 'absolute';
+        movingCard.style.left = `${deckRect.left-100}px`;
+        movingCard.style.top = `${deckRect.top}px`;            
+        movingCard.style.margin = '0'; // override margin
+        movingCard.style.transform = 'none'; // reset transform
+        movingCard.style.transition = 'transform 0.8s ease-in-out';
+
+
+        if (playerID !== "dealers-hand" && playerID !== "dealers-hand-back") {
+            const playerHandDiv = document.getElementById(playerID + "-hand-" + String(hand))
+            const playerHandRect = playerHandDiv.getBoundingClientRect();
+            setTimeout(() => {
+                movingCard.style.transform = `translate(${playerHandRect.left - deckRect.left + 50}px, ${playerHandRect.top - deckRect.top+ 100}px)`;
+            }, 100)
+            setTimeout (() => {
+                movingCard.remove();
+                playerHandDiv.appendChild(newCardDiv)
+            }, 800)
+        } else if (playerID !== "dealers-hand") {
+            const dealerHandDiv = document.querySelector('.dealers-hand')
+            const dealerHandRect = dealerHandDiv.getBoundingClientRect();
+            const dealerHandRectCenter = dealerHandRect.left + dealerHandRect.width / 2
+            setTimeout(() => {
+                movingCard.style.transform = `translate(${dealerHandRectCenter - deckRect.left}px, ${dealerHandRect.top - deckRect.top}px)`;
+            }, 100)
+            setTimeout(() => {
+                movingCard.remove()
+                cardBack.classList.add('card-back')
+                cardBack.id = "dealer-card-back"
+                newCardDiv.appendChild(cardBack)
+                dealerHandDiv.appendChild(newCardDiv)
+            }, 800)
+        } else {
+            const dealerHandDiv = document.querySelector('.dealers-hand')
+            const dealerHandRect = dealerHandDiv.getBoundingClientRect();
+            const dealerHandRectCenter = dealerHandRect.left + dealerHandRect.width / 2
+            setTimeout(() => {
+                movingCard.style.transform = `translate(${dealerHandRectCenter - deckRect.left}px, ${dealerHandRect.top - deckRect.top}px)`;
+            }, 100)
+            setTimeout(() => {
+                movingCard.remove()
+                dealerHandDiv.appendChild(newCardDiv)
+            }, 800)
+        }
+    }
+
+    addCardHTML(card, playerID, hand) {
+        const newCardDiv = document.createElement('div')
+        newCardDiv.classList.add('card')
+        if (['♣', '♠'].includes(card.suit)) {
+            newCardDiv.classList.add('black-card')
+        } else {
+            newCardDiv.classList.add('red-card')
+        }
+        newCardDiv.id = card.toString()
+
+        const cardText1 = document.createElement('p')
+        cardText1.textContent = card.toString()
+        cardText1.className = "top-left"
+        newCardDiv.appendChild(cardText1)
+        
+        const cardText2 = document.createElement('p')
+        cardText2.textContent = card.toString()
+        cardText2.className = "bottom-right"
+        newCardDiv.appendChild(cardText2)
+
+        const cardImg = document.createElement('img')
+        cardImg.src = 'Ernst-Young-Logo.png'
+        cardImg.className = 'card-image'
+        newCardDiv.appendChild(cardImg)
+
+        this.cardAnimation(newCardDiv, playerID, hand)
+    }
+
+    async addCard(card, playerID, hand) {
         this.cards.push(card)
-        setTimeout(() => {
-            const newCardDiv = document.createElement('div')
-            if (['♣', '♠'].includes(card.suit)) {
-                newCardDiv.classList.add('black-card')
-            } else {
-                newCardDiv.classList.add('red-card')
-            }
-            newCardDiv.id = card.toString()
-
-            const cardText1 = document.createElement('p')
-            cardText1.textContent = card.toString()
-            cardText1.className = "top-left"
-            newCardDiv.appendChild(cardText1)
-            
-            const cardText2 = document.createElement('p')
-            cardText2.textContent = card.toString()
-            cardText2.className = "bottom-right"
-            newCardDiv.appendChild(cardText2)
-
-            const cardImg = document.createElement('img')
-            cardImg.src = 'Ernst-Young-Logo.png'
-            cardImg.className = 'card-image'
-            newCardDiv.appendChild(cardImg)
-
-            const movingCard = newCardDiv.cloneNode(true);
-
-            cardBack.classList.add('card-back')
-            cardBack.id = "dealer-card-back"
-            movingCard.appendChild(cardBack)
-            document.body.appendChild(movingCard);
-
-            const deckRect = deckHTML.getBoundingClientRect();
-            
-            movingCard.style.position = 'absolute';
-            movingCard.style.left = `${deckRect.left-100}px`;
-            movingCard.style.top = `${deckRect.top}px`;            
-            movingCard.style.margin = '0'; // override margin
-            movingCard.style.transform = 'none'; // reset transform
-            movingCard.style.transition = 'transform 0.8s ease-in-out';
-
-
-            if (playerID !== "dealers-hand" && playerID !== "dealers-hand-back") {
-                const playerHandDiv = document.getElementById(playerID + "-hand-" + String(hand))
-                const playerHandRect = playerHandDiv.getBoundingClientRect();
-                setTimeout(() => {
-                    movingCard.style.transform = `translate(${playerHandRect.left - deckRect.left + 50}px, ${playerHandRect.top - deckRect.top+ 100}px)`;
-                }, 100)
-                setTimeout (() => {
-                    movingCard.remove();
-                    playerHandDiv.appendChild(newCardDiv)
-                }, 800)
-            } else if (playerID !== "dealers-hand") {
-                const dealerHandRect = dealerHandDiv.getBoundingClientRect();
-                setTimeout(() => {
-                    movingCard.style.transform = `translate(${dealerHandRect.left + deckRect.left - 400}px, ${dealerHandRect.top - deckRect.top}px)`;
-                }, 100)
-                setTimeout(() => {
-                    movingCard.remove()
-                    cardBack.classList.add('card-back')
-                    cardBack.id = "dealer-card-back"
-                    newCardDiv.appendChild(cardBack)
-                    dealerHandDiv.appendChild(newCardDiv)
-                }, 800)
-            } else {
-                const dealerHandRect = dealerHandDiv.getBoundingClientRect();
-                setTimeout(() => {
-                    movingCard.style.transform = `translate(${dealerHandRect.left + deckRect.left - 400}px, ${dealerHandRect.top - deckRect.top}px)`;
-                }, 100)
-                setTimeout(() => {
-                    movingCard.remove()
-                    dealerHandDiv.appendChild(newCardDiv)
-                }, 800)
-            }
-        }, 750)
+        
+        this.addCardHTML(card, playerID, hand)
     }
 
     getPlayerTotal() {
@@ -413,7 +418,7 @@ class Game {
         } else {
             this.displayText("Bet must be a number between 0 and " + String(player.moneyLeft))
             this.delay(1000)
-            //await this.betting(player);
+            await this.betting(player);
         }
     }
 
@@ -568,10 +573,6 @@ class Game {
         return (player.hand.getPlayerTotal() === 21)
     }
 
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms))
-    }
-
     async userChoice(player) {
         if (this.isSplittableHand(player) && player.moneyLeft >= player.bet*2) {
             const choice = await this.createPromptButtonResponse(String(player.name) + ", Split?", "Yes", "No")
@@ -582,13 +583,17 @@ class Game {
         } else if ([9, 10, 11].includes(player.hand.getPlayerTotal()) && player.moneyLeft >= player.bet*2) {
             const dd = await this.doubleDown(player)
             if (dd) {
-                this.delay(500);
                 this.calcBestHand(player)
                 return Promise.resolve();
             }
         } 
         
         await this.playerTurn(player)
+
+        if (player.hand.isBust()) {
+            await new Promise(resolve => setTimeout(resolve, 800));
+            await this.displayText("Bust!")
+        }
     }
 
     isSplittableHand(player) {
@@ -604,14 +609,10 @@ class Game {
         const choice = await this.createPromptButtonResponse(String(player.name) +", Hit or Stand?", "Hit", "Stand");
 
             if (choice === "Hit") {
-                player.hand.addCard(this.deck.drawCard(), player.name, hand)
+                await player.hand.addCard(this.deck.drawCard(), player.name, hand)
             } else if (choice === "Stand") {
                 break;
             }
-        }
-
-        if (player.hand.isBust()) {
-            await this.displayText("Bust!")
         }
 
         this.calcBestHand(player)
@@ -631,7 +632,6 @@ class Game {
         const cardBack = document.getElementById("dealer-card-back");
         cardBack.remove();
         while (this.dealerHand.getDealerTotal() < 17 && this.dealerHand.getDealerTotal() < this.highestScore) {
-            this.delay(500)
             this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand");
         }
 
@@ -721,8 +721,6 @@ class Game {
             }
         }
     
-        
-
         if (this.checkActivePlayer()) {
             await this.replay();
         } else {
