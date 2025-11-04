@@ -662,7 +662,7 @@ class Game {
 
         if (this.dealerHand.getDealerTotal() > 21 && !this.userHandSplit1.isBust()|| this.userHandSplit1.getPlayerTotal() > this.dealerHand.getDealerTotal() && !this.userHandSplit1.isBust()) {
             hand1 = "w";
-        } else if (this.userHandSplit1.getPlayerTotal() === 21 && this.userHandSplit1.length === 2 && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length == 2) {
+        } else if (this.userHandSplit1.getPlayerTotal() === this.dealerHand.getDealerTotal()) {
             hand1 = "d";
         } else if (this.userHandSplit1.getPlayerTotal() === 21 && this.userHandSplit1.length === 2 && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length > 2) {
             hand1 = "w";
@@ -673,7 +673,7 @@ class Game {
 
         if (this.dealerHand.getDealerTotal() > 21 && !this.userHandSplit2.isBust()|| this.userHandSplit2.getPlayerTotal() > this.dealerHand.getDealerTotal() && !this.userHandSplit2.isBust()) {
             hand2 = "w";
-        } else if (this.userHandSplit2.getPlayerTotal() === 21 && this.userHandSplit2.cards.length === 2  && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length == 2) {
+        } else if (this.userHandSplit2.getPlayerTotal() === this.dealerHand.getDealerTotal()) {
             hand2 = "d";
         } else if (this.userHandSplit2.getPlayerTotal() === 21 && this.userHandSplit2.cards.length === 2  && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length > 2) {
             hand2 = "w";
@@ -700,7 +700,7 @@ class Game {
     whoWins(player) {
         if (this.dealerHand.getDealerTotal() > 21 && !player.hand.isBust()|| player.hand.getPlayerTotal() > this.dealerHand.getDealerTotal() && !player.hand.isBust()) {
             this.playerWin(player);
-        } else if (this.isBlackJack(player) && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length == 2) {
+        } else if (player.hand.getPlayerTotal() === this.dealerHand.getDealerTotal()) {
             this.draw(player)
         } else if (this.isBlackJack(player) && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length > 2) {
             this.playerWin(player)
@@ -787,7 +787,6 @@ class Game {
             await this.replay();
         } else {
             await this.displayText("All players out of money! Game over")
-            await new Promise(resolve => setTimeout(resolve, 1000))
             await this.restartGame()
         }
     }
