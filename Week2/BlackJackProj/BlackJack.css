@@ -81,7 +81,7 @@ body {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 100px;
     position: relative;
     max-width: 900px;
     width: fit-content;

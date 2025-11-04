@@ -194,10 +194,21 @@ class Hand {
             }
         };
 
-        while (t > 17 && a > 0) {
+        
+        while (t > 21 && a > 0) {
             t -= 10;
             a--;
         }
+
+        if (t > 17 && a > 0) {
+            return t;
+        }
+
+        while (t > 21 && a > 0) {
+            t -= 10;
+            a--;
+        }
+
         return t;
     }
 
@@ -223,6 +234,7 @@ class Player {
     constructor() {
         this.moneyLeft = 1000;
         this.isStillActive = true;
+        this.didSplit = false;
     }
 
     win(bet) {
@@ -454,8 +466,10 @@ class Game {
 
         if (outcome === "win") {
             playerBalanceP.textContent = '+£' + String(player.bet)
-        } else {
+        } else if (outcome === "lose") {
             playerBalanceP.textContent = '-£' + String(player.bet)
+        } else {
+            playerBalanceP.textContent = '+£0'
         }
 
         await new Promise(resolve => setTimeout(resolve, 1000))
@@ -474,7 +488,6 @@ class Game {
     }
 
     async playerLose(player) {
-        await this.displayText("The dealer beat " + String(player.name) + "!")
         player.lose(player.bet)
 
         await this.displayBetOutcome(player, "lose")
@@ -483,16 +496,15 @@ class Game {
             return;
         }
         if (player.moneyLeft === 0) {
-            await this.displayText("Out of Money - Game Over!")
             player.isStillActive = false;
-        } else {
-            return;
         }
     }
 
-    draw(player) {
+    async draw(player) {
         this.displayText(String(player.name) + " and the Dealer got BlackJack - Tie!")
-        this.delay(500)
+        
+        
+        await this.displayBetOutcome(player, "draw")
         if (this.isSplit) {
             return;
         }
@@ -520,6 +532,8 @@ class Game {
     }
 
     async splitPair(player) {
+        player.didSplit = true;
+
         this.userHandSplit1 = new Hand();
         this.userHandSplit2 = new Hand();
 
@@ -540,12 +554,14 @@ class Game {
         this.displayText("Playing Hand 1:")
         player.hand = this.userHandSplit1
         await this.playerTurn(player)
+        this.userHandSplit1 = player.hand
 
         this.isSplit = false;
 
         this.displayText("Playing Hand 2: ")
         player.hand = this.userHandSplit2
         await this.playerTurn(player, 2)
+        this.userHandSplit2 = player.hand
     }
 
     async doubleDown(player) {
@@ -602,6 +618,7 @@ class Game {
 
     async playerTurn(player, hand=1) {
         if (this.isBlackJack(player)) {
+            await this.displayText('Blackjack!')
             return;
         }
 
@@ -628,14 +645,56 @@ class Game {
     }
 
     async dealerTurn() {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         const cardBack = document.getElementById("dealer-card-back");
         cardBack.remove();
+        await new Promise(resolve => setTimeout(resolve, 300));
         while (this.dealerHand.getDealerTotal() < 17 && this.dealerHand.getDealerTotal() < this.highestScore) {
+            await new Promise(resolve => setTimeout(resolve, 500));
             this.dealerHand.addCard(this.deck.drawCard(), "dealers-hand");
         }
 
         await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    whoWinsSplit(player) {
+        let hand1;
+        let hand2;
+
+        if (this.dealerHand.getDealerTotal() > 21 && !this.userHandSplit1.isBust()|| this.userHandSplit1.getPlayerTotal() > this.dealerHand.getDealerTotal() && !this.userHandSplit1.isBust()) {
+            hand1 = "w";
+        } else if (this.userHandSplit1.getPlayerTotal() === 21 && this.userHandSplit1.length === 2 && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length == 2) {
+            hand1 = "d";
+        } else if (this.userHandSplit1.getPlayerTotal() === 21 && this.userHandSplit1.length === 2 && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length > 2) {
+            hand1 = "w";
+        }
+        else {
+            hand1 = "l";
+        }
+
+        if (this.dealerHand.getDealerTotal() > 21 && !this.userHandSplit2.isBust()|| this.userHandSplit2.getPlayerTotal() > this.dealerHand.getDealerTotal() && !this.userHandSplit2.isBust()) {
+            hand2 = "w";
+        } else if (this.userHandSplit2.getPlayerTotal() === 21 && this.userHandSplit2.cards.length === 2  && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length == 2) {
+            hand2 = "d";
+        } else if (this.userHandSplit2.getPlayerTotal() === 21 && this.userHandSplit2.cards.length === 2  && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length > 2) {
+            hand2 = "w";
+        }
+        else {
+            hand2 = "l";
+        }
+
+        if (hand1 === "w" && hand2 === "w") {
+            player.bet *= 2;
+            this.playerWin(player);
+        } else if (hand1 === "w" && hand2 === "d" || hand1 === "d" && hand1 === "w") {
+            this.playerWin(player)
+        } else if (hand1 === "w" && hand2 === "l"  || hand1 === "l" && hand2 === "w") {
+            this.draw(player)
+        } else if (hand1 === "d" && hand2 === "l" || hand1 === "l" && hand2 === "d") {
+            this.playerLose(player)
+        } else if (hand1 === "l" && hand2 === "l") {
+            player.bet *= 2;
+            this.playerLose(player)
+        }
     }
 
     whoWins(player) {
@@ -651,11 +710,13 @@ class Game {
         }
     }
 
-    checkActivePlayer() {
+    async checkActivePlayer() {
         let totalBalance = 0;
          for (let i in this.players) {
+            console.log(totalBalance)
             totalBalance += this.players[i].moneyLeft
         }
+
         if (totalBalance > 0) {
             return true;
         } else {
@@ -716,12 +777,14 @@ class Game {
 
         for (let i in this.players) {
             let player = this.players[i]
-            if (player.isStillActive) {
+            if (player.isStillActive && !player.didSplit) {
                 this.whoWins(player);
+            } else if (player.isStillActive && player.didSplit) {
+                this.whoWinsSplit(player);
             }
         }
-    
-        if (this.checkActivePlayer()) {
+        
+        if (await this.checkActivePlayer()) {
             await this.replay();
         } else {
             await this.displayText("All players out of money! Game over")
