@@ -700,12 +700,13 @@ class Game {
     whoWins(player) {
         if (this.dealerHand.getDealerTotal() > 21 && !player.hand.isBust()|| player.hand.getPlayerTotal() > this.dealerHand.getDealerTotal() && !player.hand.isBust()) {
             this.playerWin(player);
+        } else if (this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length == 2 && !this.isBlackJack(player)) {
+            this.playerLose(player)
+        }  else if (this.isBlackJack(player) && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length > 2) {
+            this.playerWin(player)
         } else if (player.hand.getPlayerTotal() === this.dealerHand.getDealerTotal()) {
             this.draw(player)
-        } else if (this.isBlackJack(player) && this.dealerHand.getDealerTotal() === 21 && this.dealerHand.cards.length > 2) {
-            this.playerWin(player)
-        }
-        else {
+        } else {
             this.playerLose(player);
         }
     }
